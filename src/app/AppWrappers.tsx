@@ -11,7 +11,7 @@ import initialTheme from '@/theme/theme';
 import { useState } from 'react';
 import { ConfiguratorContext } from '@/contexts/ConfiguratorContext';
 
-const _NoSSR = ({ children }) => <React.Fragment>{children}</React.Fragment>;
+const _NoSSR = ({ children }: { children: ReactNode }) => <React.Fragment>{children}</React.Fragment>;
 
 const NoSSR = dynamic(() => Promise.resolve(_NoSSR), {
   ssr: false,
