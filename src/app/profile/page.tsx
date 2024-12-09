@@ -23,7 +23,7 @@ export default function Settings() {
             >
                 {/* Column Left */}
                 <Flex direction="column">
-                    <Profile name="Vlad Mihalache" avatar={profile} banner={banner} />
+                    <Profile name="Vlad Mihalache" avatar={profile.src} banner={banner.src} />
                     <Info />
                 </Flex>
                 {/* Column Right */}
