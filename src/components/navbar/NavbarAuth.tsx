@@ -60,10 +60,10 @@ export default function AuthNavbar(props: {
   // Menus
   
   
-  let authObject = "/home"; //getLinksCollapse('Authentication');
-  let mainObject = "/home"; //getLinksCollapse('Main Pages');
-  let dashboardsObject = "/home"; // getLinks('Dashboards');
-  let nftsObject = "/home"; // getLinks('NFTs');
+  let authObject: any[] = []; // Initialize with an empty array or appropriate any[] value
+  let mainObject: IRoute[] = []; // Initialize with an empty array or appropriate IRoute[] value
+  let dashboardsObject: IRoute[] = []; // Initialize with an empty array or appropriate IRoute[] value
+  let nftsObject: IRoute[] = []; // Initialize with an empty array or appropriate IRoute[] value
   let logoColor = useColorModeValue('white', 'white');
   // Chakra color mode
 
