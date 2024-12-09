@@ -1,9 +1,6 @@
 'use client';
 /*eslint-disable*/
 
-import Link from '@/components/link/Link';
-import MessageBoxChat from '@/components/MessageBox';
-import { ChatBody, OpenAIModel } from '@/types/types';
 import {
     Button,
     Flex,
@@ -15,54 +12,29 @@ import {
 import { useEffect, useState } from 'react';
 import Bg from '@/public/img/chat/bg-image.png';
 import { useRouter } from 'next/navigation';
-export default function Chat(props: { apiKeyApp: string }) {
+export default function Chat() {
     const router = useRouter();
-    // Input States
-    const [inputOnSubmit, setInputOnSubmit] = useState<string>('');
     const [prompt, setPrompt] = useState('');
-    // Loading state
     const [loading, setLoading] = useState<boolean>(false);
 
-    // API Key
-    // const [apiKey, setApiKey] = useState<string>(apiKeyApp);
     const borderColor = useColorModeValue('gray.200', 'whiteAlpha.200');
     const inputColor = useColorModeValue('navy.700', 'white');
-    const iconColor = useColorModeValue('brand.500', 'white');
-    const bgIcon = useColorModeValue(
-        'linear-gradient(180deg, #FBFBFF 0%, #CACAFF 100%)',
-        'whiteAlpha.200',
-    );
-    const brandColor = useColorModeValue('brand.500', 'white');
-    const buttonBg = useColorModeValue('white', 'whiteAlpha.100');
-    const gray = useColorModeValue('gray.500', 'white');
-    const buttonShadow = useColorModeValue(
-        '14px 27px 45px rgba(112, 144, 176, 0.2)',
-        'none',
-    );
     const textColor = useColorModeValue('navy.700', 'white');
     const placeholderColor = useColorModeValue(
         { color: 'gray.500' },
         { color: 'whiteAlpha.600' },
     );
 
-   
+    const handleGenerateQuiz = () => {
 
-    
-    
-
-    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setInputOnSubmit(event.target.value);
-    };
-const handleGenerateQuiz = () => {
-    
-    setLoading(true);
-    setTimeout(() => {
-        setLoading(false);
+        setLoading(true);
         setTimeout(() => {
-            router.push(`/chat/quiz?prompt=${encodeURIComponent(prompt)}`);
-        }, 1000);
-    }, 2000);
-};
+            setLoading(false);
+            setTimeout(() => {
+                router.push(`/chat/quiz?prompt=${encodeURIComponent(prompt)}`);
+            }, 1000);
+        }, 2000);
+    };
 
     return (
         <Flex
