@@ -1,5 +1,4 @@
 import { StreamLanguage } from '@codemirror/language';
-import { go } from '@codemirror/legacy-modes/mode/go';
 import { tokyoNight } from '@uiw/codemirror-theme-tokyo-night';
 import CodeMirror from '@uiw/react-codemirror';
 import { FC, useEffect, useState } from 'react';
@@ -43,7 +42,6 @@ export const CodeBlock: FC<Props> = ({
         value={code}
         minHeight={`${height}px`}
         className="rounded-md overflow-scroll"
-        extensions={[StreamLanguage.define(go)]}
         theme={tokyoNight}
         onChange={(value) => onChange(value)}
       />
