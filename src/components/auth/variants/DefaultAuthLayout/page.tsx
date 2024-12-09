@@ -1,13 +1,14 @@
 'use client';
 // Chakra imports
 import { Box, Flex, Icon, Text } from '@chakra-ui/react';
-import Footer from '@/components/footer/FooterAuthDefault';
+//import Footer from ''; // Ensure the path is correct or the file exists
 import FixedPlugin from '@/components/fixedPlugin/FixedPlugin';
 // Custom components
 // Assets
 import { FaChevronLeft } from 'react-icons/fa';
 import NavLink from '@/components/link/NavLink';
 import { PropsWithChildren } from 'react';
+import Footer from '@/components/footer/FooterAuthDefault';
 
 interface DefaultAuthLayoutProps extends PropsWithChildren {
   children: JSX.Element;
