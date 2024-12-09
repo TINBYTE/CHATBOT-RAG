@@ -32,7 +32,7 @@ export interface SidebarProps extends PropsWithChildren {
 }
 
 function Sidebar(props: SidebarProps) {
-  const { routes, setApiKey } = props;
+  const { routes } = props;
   // this is for the rest of the collapses
   let variantChange = '0.2s linear';
   let shadow = useColorModeValue(
@@ -69,7 +69,7 @@ function Sidebar(props: SidebarProps) {
           renderThumbVertical={renderThumb}
           renderView={renderView}
         >
-          <Content setApiKey={setApiKey} routes={routes} />
+          <Content routes={routes} />
         </Scrollbars>
       </Box>
     </Box>
