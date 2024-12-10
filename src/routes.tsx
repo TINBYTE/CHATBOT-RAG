@@ -1,12 +1,7 @@
-
-
 import { Icon } from '@chakra-ui/react';
 import {
   MdAddCircle,
-  MdHome,
   MdInsertChartOutlined,
-  MdOutlineLightbulb,
-  MdOutlineNotificationImportant,
 } from 'react-icons/md';
 
 // Auth Imports
@@ -58,26 +53,6 @@ const routes: IRoute[] = [
       },
     ],
   }
-  ,
-  
-  ...(userType === 'admin' 
-    ? [
-    {
-      name: 'Alertas',
-      path: '/alerts',
-      icon: (
-        <Icon
-          as={MdOutlineNotificationImportant}
-          width="20px"
-          height="20px"
-          color="inherit"
-        />
-      ),
-      collapse: true,
-      items: [
-      ],
-    },
-  ] : []),
 ];  
 
 export default routes;
