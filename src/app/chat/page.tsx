@@ -36,6 +36,13 @@ export default function Chat() {
         }, 2000);
     };
 
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            router.push('/auth/login');
+        }
+    }, [router]);
+
     return (
         <Flex
             w="100%"

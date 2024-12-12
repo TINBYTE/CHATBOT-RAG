@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Button,
@@ -29,21 +29,18 @@ import { RiEyeCloseLine } from 'react-icons/ri';
 import { useRouter } from 'next/navigation';
 
 function Register() {
+  const router = useRouter();
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      router.push('/chat');
+    }
+  }, [router]);
   const textColor = useColorModeValue('navy.700', 'white');
   const textColorSecondary = 'gray.400';
   const textColorDetails = useColorModeValue('navy.700', 'secondaryGray.600');
   const textColorBrand = useColorModeValue('brand.500', 'white');
   const brandStars = useColorModeValue('brand.500', 'brand.400');
-  const googleBg = useColorModeValue('secondaryGray.300', 'whiteAlpha.200');
-  const googleText = useColorModeValue('navy.700', 'white');
-  const googleHover = useColorModeValue(
-    { bg: 'gray.200' },
-    { bg: 'whiteAlpha.300' },
-  );
-  const googleActive = useColorModeValue(
-    { bg: 'secondaryGray.300' },
-    { bg: 'whiteAlpha.200' },
-  );
   const [show, setShow] = useState(false);
   const handleClick = () => setShow(!show);
 
@@ -55,7 +52,7 @@ function Register() {
 
   const [alert, setAlert] = useState<{ visible: boolean; type: 'success' | 'error' | 'info' | 'warning' | undefined; message: string }>({ visible: false, type: undefined, message: '' });
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
+  
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -75,7 +72,7 @@ function Register() {
         },
         body: JSON.stringify(formData),
       });
-      
+
       const data = await response.json();
       if (response.ok) {
         setAlert({ visible: true, type: 'success', message: 'User registered successfully!' });
@@ -90,6 +87,8 @@ function Register() {
       setLoading(false);
     }
   };
+
+  
 
   return (
     <CenteredAuth
@@ -220,7 +219,7 @@ function Register() {
                     />
                   </InputRightElement>
                 </InputGroup>
-                
+
                 <Button
                   variant="brand"
                   fontSize="14px"

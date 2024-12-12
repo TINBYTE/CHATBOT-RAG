@@ -55,6 +55,10 @@ const QuizPage: React.FC = () => {
   const currentQuestion = quizData.questions[currentQuestionIndex];
 
   useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      router.push('/auth/login');
+    }
     if (quizCompleted) return;
 
     if (timer === 0) {
@@ -64,7 +68,7 @@ const QuizPage: React.FC = () => {
       setTimer((prev) => (prev > 0 ? prev - 1 : 0));
     }, 1000);
     return () => clearInterval(interval);
-  }, [timer, quizCompleted]);
+  }, [timer, quizCompleted , router]);
 
   const handleAnswer = () => {
     setIsAnswered(true);

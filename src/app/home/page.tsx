@@ -185,7 +185,7 @@ export default function HeroSection() {
             gap={4}
           >
             <Link 
-              href="/chat" 
+              href="/auth/login" 
               bg="purple.500" 
               px={10} 
               rounded="xl" py={4} 

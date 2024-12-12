@@ -1,8 +1,6 @@
 'use client';
 
-import React  from 'react';
-import { useActionState } from 'next/action-state';
-// Chakra imports
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Button,
@@ -17,32 +15,75 @@ import {
   InputRightElement,
   useColorModeValue,
   Text,
+  Alert,
+  AlertIcon,
+  AlertTitle,
+  AlertDescription,
 } from '@chakra-ui/react';
-// Assets
 import { MdOutlineRemoveRedEye } from 'react-icons/md';
 import { RiEyeCloseLine } from 'react-icons/ri';
-
-// Custom components
 import CenteredAuth from '@/components/auth/variants/CenteredAuthLayout/page';
 import NavLink from '@/components/link/NavLink';
-
-// jwt imports
-import { login } from './actions';
+import { useRouter } from 'next/navigation';
 
 function Login() {
-  // Chakra color mode
+
+  
   const textColor = useColorModeValue('navy.700', 'white');
   const textColorSecondary = 'gray.400';
   const textColorDetails = useColorModeValue('navy.700', 'secondaryGray.600');
   const textColorBrand = useColorModeValue('brand.500', 'white');
   const brandStars = useColorModeValue('brand.500', 'brand.400');
- 
 
-  const [show, setShow] = React.useState(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const router = useRouter();
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+        router.push('/chat');
+    }
+}, [router]);
+
+  const [show, setShow] = useState(false);
   const handleClick = () => setShow(!show);
 
+  const [alert, setAlert] = useState<{ visible: boolean; type: 'success' | 'error' | 'info' | 'warning' | undefined; message: string }>({ visible: false, type: undefined, message: '' });
 
-  const [state , loginAction ] = useActionState(login , undefined);
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!response.ok){
+        setAlert({ visible: true, type: 'error', message: "Invalid credentials!!!" });
+        setLoading(false);
+        return ;
+      } 
+      setAlert({ visible: true, type: 'success', message: "Bienvenue!" });
+      const { token } = await response.json();
+      localStorage.setItem('token', token);
+      router.push('/chat');
+    } catch (err) {
+      setLoading(false);
+      if (err instanceof Error) {
+        setError(err.message);
+        setAlert({ visible: true, type: 'error', message: error });
+      } else {
+        setError('An unexpected error occurred');
+        setAlert({ visible: true, type: 'error', message: error });
+      }
+    }
+  };
+
   return (
     <CenteredAuth
       cardTop={{ base: '140px', md: '14vh' }}
@@ -82,57 +123,72 @@ function Login() {
           me="auto"
           mb={{ base: '20px', md: 'auto' }}
         >
-          <FormControl>
-            <FormLabel
-              display="flex"
-              ms="4px"
-              fontSize="sm"
-              fontWeight="500"
-              color={textColor}
-              mb="8px"
-            >
-              Email<Text color={brandStars}>*</Text>
-            </FormLabel>
-            <Input
-              isRequired={true}
-              variant="auth"
-              fontSize="sm"
-              ms={{ base: '0px', md: '0px' }}
-              type="email"
-              placeholder="mail@fpo.com"
-              mb="24px"
-              fontWeight="500"
-              size="lg"
-            />
-            <FormLabel
-              ms="4px"
-              fontSize="sm"
-              fontWeight="500"
-              color={textColor}
-              display="flex"
-            >
-              Password<Text color={brandStars}>*</Text>
-            </FormLabel>
-            <InputGroup size="md">
+          <form onSubmit={handleSubmit}>
+            <FormControl>
+              {alert.visible && (
+                <Alert status={alert.type} mb="4">
+                  <AlertIcon />
+                  <AlertTitle>{alert.type === 'success' ? 'Success' : 'Error'}:</AlertTitle>
+                  <AlertDescription>{alert.message}</AlertDescription>
+                </Alert>
+              )}
+              <FormLabel
+                display="flex"
+                ms="4px"
+                fontSize="sm"
+                fontWeight="500"
+                color={textColor}
+                mb="8px"
+              >
+                Email<Text color={brandStars}>*</Text>
+              </FormLabel>
               <Input
                 isRequired={true}
-                fontSize="sm"
-                ms={{ base: '0px', md: '4px' }}
-                placeholder="Min. 8 characters"
-                mb="24px"
-                size="lg"
-                type={show ? 'text' : 'password'}
                 variant="auth"
+                fontSize="sm"
+                ms={{ base: '0px', md: '0px' }}
+                type="email"
+                placeholder="mail@fpo.com"
+                mb="24px"
+                fontWeight="500"
+                size="lg"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
-              <InputRightElement display="flex" alignItems="center" mt="4px">
-                <Icon
-                  color={textColorSecondary}
-                  _hover={{ cursor: 'pointer' }}
-                  as={show ? RiEyeCloseLine : MdOutlineRemoveRedEye}
-                  onClick={handleClick}
+            </FormControl>
+            <FormControl>
+              <FormLabel
+                ms="4px"
+                fontSize="sm"
+                fontWeight="500"
+                color={textColor}
+                display="flex"
+              >
+                Password<Text color={brandStars}>*</Text>
+              </FormLabel>
+              <InputGroup size="md">
+                <Input
+                  isRequired={true}
+                  fontSize="sm"
+                  ms={{ base: '0px', md: '4px' }}
+                  placeholder="Min. 8 characters"
+                  mb="24px"
+                  size="lg"
+                  type={show ? 'text' : 'password'}
+                  variant="auth"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                 />
-              </InputRightElement>
-            </InputGroup>
+                <InputRightElement display="flex" alignItems="center" mt="4px">
+                  <Icon
+                    color={textColorSecondary}
+                    _hover={{ cursor: 'pointer' }}
+                    as={show ? RiEyeCloseLine : MdOutlineRemoveRedEye}
+                    onClick={handleClick}
+                  />
+                </InputRightElement>
+              </InputGroup>
+            </FormControl>
             <Flex justifyContent="space-between" align="center" mb="24px">
               <FormControl display="flex" alignItems="center">
                 <Checkbox
@@ -168,10 +224,12 @@ function Login() {
               w="100%"
               h="50"
               mb="24px"
+              type="submit"
+              isLoading={loading ? true : false}
             >
               Sign In
             </Button>
-          </FormControl>
+          </form>
           <Flex
             flexDirection="column"
             justifyContent="center"
