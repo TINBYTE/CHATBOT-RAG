@@ -21,10 +21,12 @@ import { IoMdMoon, IoMdSunny } from 'react-icons/io';
 import { MdInfoOutline } from 'react-icons/md';
 import NavLink from '../link/NavLink';
 import routes from '@/routes';
-
+import { useUser } from '@/contexts/UserContext';
+import { useRouter } from 'next/navigation';
 export default function HeaderLinks(props: {
   secondary: boolean;
 }) {
+  const { user } = useUser();
   const { secondary } = props;
   const { colorMode, toggleColorMode } = useColorMode();
   // Chakra Color Mode
@@ -36,16 +38,15 @@ export default function HeaderLinks(props: {
     '14px 17px 40px 4px rgba(112, 144, 176, 0.18)',
     '0px 41px 75px #081132',
   );
-  const buttonBg = useColorModeValue('transparent', 'navy.800');
-  const hoverButton = useColorModeValue(
-    { bg: 'gray.100' },
-    { bg: 'whiteAlpha.100' },
-  );
-  const activeButton = useColorModeValue(
-    { bg: 'gray.200' },
-    { bg: 'whiteAlpha.200' },
-  );
 
+
+  const { logout } = useUser();
+  const router = useRouter();
+
+  const handleLogout = () => {
+    logout(); 
+    router.push('/auth/login'); 
+  };
   return (
     <Flex
       zIndex="100"
@@ -58,7 +59,7 @@ export default function HeaderLinks(props: {
       borderRadius="30px"
       boxShadow={shadow}
     >
-      
+
       <SidebarResponsive routes={routes} />
 
 
@@ -116,7 +117,7 @@ export default function HeaderLinks(props: {
               fontWeight="700"
               color={textColor}
             >
-              👋&nbsp; Hey, NOUREDDINE
+              👋&nbsp; Hey, {user?.username || 'Guest'}
             </Text>
           </Flex>
           <Flex flexDirection="column" p="10px">
@@ -139,6 +140,7 @@ export default function HeaderLinks(props: {
               color="red.400"
               borderRadius="8px"
               px="14px"
+              onClick={handleLogout} // Attach logout handler here
             >
               <Text fontWeight="500" fontSize="sm">
                 Log out

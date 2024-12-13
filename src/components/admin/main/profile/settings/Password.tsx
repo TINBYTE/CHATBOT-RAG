@@ -3,11 +3,13 @@
 import { Button, Flex, FormControl, Text, useColorModeValue } from '@chakra-ui/react';
 import Card from '@/components/card/Card';
 import InputField from '@/components/fields/InputField';
+import { useUser } from '@/contexts/UserContext';
 
 export default function Settings() {
 	// Chakra Color Mode
 	const textColorPrimary = useColorModeValue('secondaryGray.900', 'white');
 	const textColorSecondary = 'secondaryGray.600';
+
 	return (
 		<FormControl>
 			<Card>
@@ -26,9 +28,11 @@ export default function Settings() {
 						<InputField mb='25px' id='confirm' label='New Password Confirmation' placeholder='@john123' />
 					</Flex>
 				</FormControl>
-				<Button variant='brand' minW='183px' fontSize='sm' fontWeight='500' ms='auto'>
-					Change Password
-				</Button>
+				<Flex justifyContent='center'>
+					<Button variant='brand' minW='183px' fontSize='sm' fontWeight='500'>
+						Change Password
+					</Button>
+				</Flex>
 			</Card>
 		</FormControl>
 	);

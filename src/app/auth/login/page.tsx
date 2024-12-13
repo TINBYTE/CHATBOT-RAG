@@ -25,7 +25,7 @@ import { RiEyeCloseLine } from 'react-icons/ri';
 import CenteredAuth from '@/components/auth/variants/CenteredAuthLayout/page';
 import NavLink from '@/components/link/NavLink';
 import { useRouter } from 'next/navigation';
-
+import { useUser } from '@/contexts/UserContext';
 function Login() {
 
   
@@ -40,13 +40,14 @@ function Login() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const router = useRouter();
-
+  const { setUser } = useUser();
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
         router.push('/chat');
     }
-}, [router]);
+
+}, [router ]);
 
   const [show, setShow] = useState(false);
   const handleClick = () => setShow(!show);
@@ -68,6 +69,16 @@ function Login() {
         setLoading(false);
         return ;
       } 
+
+      //success
+      const userResponse = await fetch(`/api/profile/getuser?email=${email}`);
+      if (!userResponse.ok) {
+        throw new Error('Failed to fetch user data');
+      }
+
+      const userData = await userResponse.json();
+      setUser(userData); // Update user context with fetched data
+
       setAlert({ visible: true, type: 'success', message: "Bienvenue!" });
       const { token } = await response.json();
       localStorage.setItem('token', token);

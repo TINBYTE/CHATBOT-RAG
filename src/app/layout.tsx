@@ -1,6 +1,7 @@
+'use client'
 import React, {ReactNode} from "react";
 import AppWrappers from "./AppWrappers";
-
+import { UserProvider } from '@/contexts/UserContext';
 export default function RootLayout({
   children,
 }: {
@@ -10,7 +11,9 @@ export default function RootLayout({
       <html lang="en">
           <body id={'root'}>
               <AppWrappers>
-                {children}
+                <UserProvider>
+                  {children}
+                </UserProvider>
               </AppWrappers>
           </body>
       </html>

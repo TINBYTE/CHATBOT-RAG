@@ -28,6 +28,8 @@ import { IoMdPerson } from 'react-icons/io';
 import { FiLogOut } from 'react-icons/fi';
 import { LuHistory } from 'react-icons/lu';
 import { MdOutlineManageAccounts, MdOutlineSettings } from 'react-icons/md';
+import { useUser } from '@/contexts/UserContext';
+import { useRouter } from 'next/navigation';
 
 // FUNCTIONS
 
@@ -37,6 +39,7 @@ interface SidebarContent extends PropsWithChildren {
 }
 
 function SidebarContent(props: SidebarContent) {
+  const { user } = useUser();
   const { routes } = props;
   const textColor = useColorModeValue('navy.700', 'white');
   const borderColor = useColorModeValue('gray.200', 'whiteAlpha.300');
@@ -53,6 +56,16 @@ function SidebarContent(props: SidebarContent) {
   const gray = useColorModeValue('gray.500', 'white');
   let menuBg = useColorModeValue('white', 'navy.800');
   // SIDEBAR
+
+  
+
+  const { logout } = useUser();
+  const router = useRouter();
+
+  const handleLogout = () => {
+    logout(); 
+    router.push('/auth/login'); 
+  };
   return (
     <Flex
       direction="column"
@@ -81,7 +94,7 @@ function SidebarContent(props: SidebarContent) {
       >
         <NextAvatar h="34px" w="34px" src={avatar4} me="10px" />
         <Text color={textColor} fontSize="xs" fontWeight="600" me="10px">
-          NOUREDDIN GAJJA
+          {user?.username || 'Guest'}
         </Text>
         <Menu>
           <MenuButton
@@ -146,6 +159,7 @@ function SidebarContent(props: SidebarContent) {
           minW="34px"
           justifyContent={'center'}
           alignItems="center"
+          onClick={handleLogout}
         >
           <Icon as={FiLogOut} width="16px" height="16px" color="inherit" />
         </Button>

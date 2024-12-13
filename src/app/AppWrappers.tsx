@@ -11,6 +11,7 @@ import initialTheme from '@/theme/theme';
 import { useState } from 'react';
 import { ConfiguratorContext } from '@/contexts/ConfiguratorContext';
 
+
 const _NoSSR = ({ children }: { children: ReactNode }) => <React.Fragment>{children}</React.Fragment>;
 
 const NoSSR = dynamic(() => Promise.resolve(_NoSSR), {
@@ -37,7 +38,9 @@ export default function AppWrappers({ children }: { children: ReactNode }) {
           setContrast,
         }}
       >
-        <ChakraProvider theme={theme}>{children}</ChakraProvider>
+        <ChakraProvider theme={theme}>
+          {children}
+        </ChakraProvider>
       </ConfiguratorContext.Provider>
     </NoSSR>
   );

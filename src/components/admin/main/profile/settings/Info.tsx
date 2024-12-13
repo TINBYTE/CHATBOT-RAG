@@ -3,12 +3,20 @@
 import { Button, Flex, FormControl, SimpleGrid, Text, useColorModeValue } from '@chakra-ui/react';
 import Card from '@/components/card/Card';
 import InputField from '@/components/fields/InputField';
-import TextField from '@/components/fields/TextField';
+import { useUser } from '@/contexts/UserContext';
+import { useState } from 'react';
 
 export default function Settings() {
 	// Chakra Color Mode
 	const textColorPrimary = useColorModeValue('secondaryGray.900', 'white');
 	const textColorSecondary = 'secondaryGray.600';
+
+	const { user } = useUser();
+
+	const [email, setEmail] = useState(user?.email || 'Gest@example.com');
+	const [username, setUsername] = useState(user?.username || 'Gest')
+
+
 	return (
 		<FormControl>
 			<Card>
@@ -21,21 +29,28 @@ export default function Settings() {
 					</Text>
 				</Flex>
 				<SimpleGrid columns={{ sm: 1, md: 2 }} spacing={{ base: '20px', xl: '20px' }}>
-					<InputField mb='25px' me='30px' id='username' label='Username' placeholder='@john123' />
-					<InputField mb='25px' id='email' label='Email Address' placeholder='mail@fpo.com' />
+					<InputField 
+						mb='25px' 
+						me='30px' 
+						id='username' 
+						label='Username' 
+						value={username}
+						onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUsername(e.target.value)} />
+					<InputField
+						mb='25px'
+						id='email'
+						label='Email Address'
+						value={email}
+						onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
+					/>
 					<InputField mb='25px' me='30px' id='first_name' label='First Name' placeholder='John' />
 					<InputField mb='25px' id='last_name' label='Last Name' placeholder='Doe' />
 				</SimpleGrid>
-				<InputField id='job' label='Job' placeholder='Web Developer' />
-				<TextField
-					id='about'
-					label='About Me'
-					h='100px'
-					placeholder='Tell something about yourself in 150 characters!'
-				/>
-				<Button variant='brand' minW='183px' fontSize='sm' fontWeight='500' ms='auto'>
-					Save changes
-				</Button>
+				<Flex justify='center' mt='25px'>
+					<Button variant='brand' minW='183px' fontSize='sm' fontWeight='500'>
+						Save changes
+					</Button>
+				</Flex>
 			</Card>
 		</FormControl>
 	);
