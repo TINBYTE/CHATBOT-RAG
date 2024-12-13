@@ -55,10 +55,10 @@ const QuizPage: React.FC = () => {
   const currentQuestion = quizData.questions[currentQuestionIndex];
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      router.push('/auth/login');
-    }
+    const usertoken = localStorage.getItem('usertoken');
+        if (!usertoken) {
+            router.push('/auth/login');
+      }
     if (quizCompleted) return;
 
     if (timer === 0) {

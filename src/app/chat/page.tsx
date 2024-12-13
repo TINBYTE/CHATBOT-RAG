@@ -37,8 +37,8 @@ export default function Chat() {
     };
 
     useEffect(() => {
-        const token = localStorage.getItem('token');
-        if (!token) {
+        const usertoken = localStorage.getItem('usertoken');
+        if (!usertoken) {
             router.push('/auth/login');
         }
     }, [router]);

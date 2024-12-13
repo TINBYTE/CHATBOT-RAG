@@ -2,7 +2,7 @@
 
 
 // Chakra imports
-import { Box, Flex } from '@chakra-ui/react';
+import { Box, Flex, SimpleGrid } from '@chakra-ui/react';
 // Assets
 import banner from '@/public/img/auth/banner.png';
 import profile from '@/public/img/crm/vbz.png';
@@ -12,38 +12,18 @@ import Info from '@/components/admin/main/profile/settings/Info';
 import Password from '@/components/admin/main/profile/settings/Password';
 import Profile from '@/components/admin/main/profile/settings/Profile';
 
-import { useUser } from '@/contexts/UserContext';
+import { UserProvider, useUser } from '@/contexts/UserContext';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import CryptoJS from 'crypto-js';
 export default function Settings() {
-    const { user } = useUser();
     const router = useRouter();
-    const { setUser } = useUser();
-    const encryptionKey = process.env.NEXT_PUBLIC_ENCRYPTION_KEY || 'fallback-key';
-
+    const { user } = useUser();
     useEffect(() => {
-        const encryptedToken = localStorage.getItem('token');
-        if (!encryptedToken) {
-          router.push('/auth/login');
-        } else {
-          try {
-            const decryptedToken = CryptoJS.AES.decrypt(encryptedToken, encryptionKey).toString(CryptoJS.enc.Utf8);
-            if (!decryptedToken) throw new Error('Decrypted token is empty');
-            
-            const user = JSON.parse(decryptedToken); // Ensure valid JSON
-            setUser(user);
-          } catch (error) {
-            if (error instanceof Error) {
-              console.error('Error decrypting or parsing token:', error.message);
-            } else {
-              console.error('Error decrypting or parsing token:', error);
-            }
-            localStorage.removeItem('token'); // Clear invalid token
+        const usertoken = localStorage.getItem('usertoken');
+        if (!usertoken) {
             router.push('/auth/login');
-          }
         }
-      }, [router]);
+    }, [router]);
 
     
     return (

@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
-import CryptoJS from 'crypto-js';
+
 type User = {
   id: string;
   username: string;
@@ -13,40 +13,25 @@ type UserContextType = {
   logout: () => void;
 };
 
-const encryptionKey = process.env.NEXT_PUBLIC_ENCRYPTION_KEY || 'fallback-key';
-
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    const encryptedToken = localStorage.getItem('token');
-    if (encryptedToken) {
+    const token = localStorage.getItem('usertoken');
+    if (token) {
       try {
-        const decryptedToken = CryptoJS.AES.decrypt(encryptedToken, encryptionKey).toString(CryptoJS.enc.Utf8);
-        if (decryptedToken) {
-          fetch('/api/profile/getuser', {
-            headers: { Authorization: `Bearer ${decryptedToken}` },
-          })
-            .then((res) => {
-              if (!res.ok) throw new Error('Failed to fetch user data');
-              console.log("ressssssssssssssssssssssssssssss",res);
-              
-              return res.json();
-            })
-            .then((userData) => setUser(userData))
-            .catch(() => localStorage.removeItem('token'));
-        }
-      } catch {
-        console.error('Failed to decrypt token');
-        localStorage.removeItem('token');
+        const userData: User = JSON.parse(token);
+        setUser(userData);
+      } catch (error) {
+        console.error('Failed to parse user token', error);
       }
     }
   }, []);
 
   const logout = () => {
-    localStorage.removeItem('token');
+    localStorage.removeItem('usertoken');
     setUser(null);
   };
 

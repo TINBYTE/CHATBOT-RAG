@@ -4,7 +4,6 @@ import React, { useEffect, useState } from 'react';
 import {
   Box,
   Button,
-  Checkbox,
   Flex,
   FormControl,
   FormLabel,
@@ -21,9 +20,7 @@ import {
   AlertDescription,
 } from '@chakra-ui/react';
 import Link from '@/components/link/Link';
-import { HSeparator } from '@/components/separator/Separator';
 import CenteredAuth from '@/components/auth/variants/CenteredAuthLayout/page';
-import { FcGoogle } from 'react-icons/fc';
 import { MdOutlineRemoveRedEye } from 'react-icons/md';
 import { RiEyeCloseLine } from 'react-icons/ri';
 import { useRouter } from 'next/navigation';
@@ -31,9 +28,9 @@ import { useRouter } from 'next/navigation';
 function Register() {
   const router = useRouter();
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      router.push('/chat');
+    const usertoken = localStorage.getItem('usertoken');
+    if (!usertoken) {
+      router.push('/auth/login');
     }
   }, [router]);
   const textColor = useColorModeValue('navy.700', 'white');
@@ -52,7 +49,7 @@ function Register() {
 
   const [alert, setAlert] = useState<{ visible: boolean; type: 'success' | 'error' | 'info' | 'warning' | undefined; message: string }>({ visible: false, type: undefined, message: '' });
   const [loading, setLoading] = useState(false);
-  
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -88,7 +85,7 @@ function Register() {
     }
   };
 
-  
+
 
   return (
     <CenteredAuth

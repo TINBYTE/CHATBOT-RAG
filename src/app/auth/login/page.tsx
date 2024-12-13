@@ -26,9 +26,9 @@ import CenteredAuth from '@/components/auth/variants/CenteredAuthLayout/page';
 import NavLink from '@/components/link/NavLink';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@/contexts/UserContext';
-import CryptoJS from 'crypto-js';
+//import CryptoJS from 'crypto-js';
 
-function Login() {
+const Login: React.FC = () => {
   const textColor = useColorModeValue('navy.700', 'white');
   const textColorSecondary = 'gray.400';
   const textColorDetails = useColorModeValue('navy.700', 'secondaryGray.600');
@@ -38,22 +38,18 @@ function Login() {
   const [loading, setLoading] = useState<boolean>(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
   const router = useRouter();
   const { setUser } = useUser();
-  const encryptionKey = process.env.NEXT_PUBLIC_ENCRYPTION_KEY || 'fallback-key';
+  //const encryptionKey = process.env.NEXT_PUBLIC_ENCRYPTION_KEY || 'fallback-key';
 
   useEffect(() => {
-    const encryptedToken = localStorage.getItem('token');
-    if (encryptedToken) {
+    const usertoken = localStorage.getItem('usertoken');
+    if (usertoken) {
       try {
-        const decryptedToken = CryptoJS.AES.decrypt(encryptedToken, encryptionKey).toString(CryptoJS.enc.Utf8);
-        if (decryptedToken) {
-          // Optionally fetch user data here if required
-          router.push('/chat');
-        }
-      } catch {
-        console.error('Failed to decrypt token');
+        //const decryptedToken = CryptoJS.AES.decrypt(authtoken, encryptionKey).toString(CryptoJS.enc.Utf8);
+        router.push('/chat');
+      } catch (error) {
+        console.error('Failed auth token', error);
       }
     }
   }, [router]);
@@ -64,10 +60,9 @@ function Login() {
   const [alert, setAlert] = useState<{ visible: boolean; type: 'success' | 'error' | 'info' | 'warning' | undefined; message: string }>({ visible: false, type: undefined, message: '' });
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-  
     e.preventDefault();
-    
     setLoading(true);
+
     try {
       const response = await fetch('/api/auth/login', {
         method: 'POST',
@@ -75,19 +70,11 @@ function Login() {
         body: JSON.stringify({ email, password }),
       });
 
-      
-
       if (!response.ok) {
         setAlert({ visible: true, type: 'error', message: 'Invalid credentials!!!' });
         setLoading(false);
         return;
       }
-
-      const { tokenauth } = await response.json();
-
-      // Encrypt and save token to localStorage
-      const encryptedToken = CryptoJS.AES.encrypt(tokenauth, encryptionKey).toString();
-      localStorage.setItem('token', encryptedToken);
 
       // Fetch user data
       const userResponse = await fetch(`/api/profile/getuser?email=${email}`);
@@ -96,17 +83,16 @@ function Login() {
       }
 
       const userData = await userResponse.json();
-      setUser(userData); // Update user context with fetched data
+      localStorage.setItem('usertoken', JSON.stringify(userData));
+      setUser(userData);
 
       setAlert({ visible: true, type: 'success', message: 'Bienvenue!' });
       router.push('/chat');
     } catch (err) {
       setLoading(false);
       if (err instanceof Error) {
-        setError(err.message);
         setAlert({ visible: true, type: 'error', message: err.message });
       } else {
-        setError('An unexpected error occurred');
         setAlert({ visible: true, type: 'error', message: 'An unexpected error occurred' });
       }
     }
