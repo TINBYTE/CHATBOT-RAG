@@ -1,12 +1,10 @@
 'use client';
 // chakra imports
 import {
-  Badge,
   Box,
   Button,
   Flex,
   Icon,
-  Link,
   Menu,
   MenuButton,
   MenuItem,
@@ -21,13 +19,10 @@ import avatar4 from '/public/img/avatars/avatar4.png';
 import { NextAvatar } from '@/components/image/Avatar';
 import Brand from '@/components/sidebar/components/Brand';
 import Links from '@/components/sidebar/components/Links';
-import { RoundedChart } from '@/components/icons/Icons';
 import { PropsWithChildren } from 'react';
 import { IRoute } from '@/types/navigation';
-import { IoMdPerson } from 'react-icons/io';
 import { FiLogOut } from 'react-icons/fi';
-import { LuHistory } from 'react-icons/lu';
-import { MdOutlineManageAccounts, MdOutlineSettings } from 'react-icons/md';
+import { MdOutlineSettings } from 'react-icons/md';
 import { useUser } from '@/contexts/UserContext';
 import { useRouter } from 'next/navigation';
 
@@ -43,7 +38,6 @@ function SidebarContent(props: SidebarContent) {
   const { routes } = props;
   const textColor = useColorModeValue('navy.700', 'white');
   const borderColor = useColorModeValue('gray.200', 'whiteAlpha.300');
-  const bgColor = useColorModeValue('white', 'navy.700');
   const shadow = useColorModeValue(
     '14px 17px 40px 4px rgba(112, 144, 176, 0.18)',
     '14px 17px 40px 4px rgba(12, 44, 55, 0.18)',
@@ -53,19 +47,16 @@ function SidebarContent(props: SidebarContent) {
     '4px 17px 40px 4px rgba(112, 144, 176, 0.08)',
     'none',
   );
-  const gray = useColorModeValue('gray.500', 'white');
   let menuBg = useColorModeValue('white', 'navy.800');
-  // SIDEBAR
-
-  
 
   const { logout } = useUser();
   const router = useRouter();
 
-  const handleLogout = () => {
-    logout(); 
-    router.push('/auth/login'); 
+  const handleLogout = async () => {
+    logout(); // Ensure logout completes before navigating
+    router.push('/auth/login');
   };
+
   return (
     <Flex
       direction="column"

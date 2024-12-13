@@ -45,12 +45,14 @@ export default function Settings() {
                             id='username' 
                             label='Username' 
                             value={username}
+                            isDisabled
                             />
                         <InputField
                             mb='25px'
                             id='email'
                             label='Email Address'
                             value={email}
+                            isDisabled
                          />
                     </Flex>
                 </FormControl>

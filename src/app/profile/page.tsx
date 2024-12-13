@@ -25,15 +25,13 @@ export default function Settings() {
         }
     }, [router]);
 
-    
-    return (
-        <Box pt={{ base: '130px', md: '80px', xl: '80px' }}>
+     {/*<Box pt={{ base: '130px', md: '80px', xl: '80px' }}>
             <Flex direction="column" flex="1">
-                {/* Top Flex - Takes all the space */}
+                
                 <Profile name={user?.username || 'Guest'} avatar={profile.src} banner={banner.src} />
             </Flex>
             <Flex direction={{ base: 'column', md: 'row' }} flex="1" mt="20px">
-                {/* Bottom Flexes - Share the space */}
+                
                 <Flex direction="column" flex="1" mr={{ base: '0', md: '10px' }} mb={{ base: '10px', md: '0' }}>
                     <Info />
                 </Flex>
@@ -41,8 +39,38 @@ export default function Settings() {
                     <Password />
                 </Flex>
             </Flex>
-        </Box>
+        </Box>*/}
+    return (
+       
+        
+      (  <Box pt={{ base: '130px', md: '80px', xl: '80px' }}>
+  <Flex
+    direction="column"
+    align="center" // Centers the content horizontally
+    justify="center" // Centers the content vertically
+    minH="calc(100vh - 130px)" // Ensures the content takes up the full viewport height, minus the top padding
+  >
+    {/* Top Section */}
+    <Flex direction="column" w={{ base: '90%', md: '70%', lg: '50%' }} mb="20px">
+      <Profile name={user?.username || 'Guest'} avatar={profile.src} banner={banner.src} />
+    </Flex>
 
+    {/* Bottom Section */}
+    <Flex
+      direction={{ base: 'column', md: 'row' }}
+      w={{ base: '90%', md: '70%', lg: '50%' }}
+      gap="10px"
+    >
+      <Flex direction="column" flex="1" mb={{ base: '10px', md: '0' }}>
+        <Info />
+      </Flex>
+      <Flex direction="column" flex="1">
+        <Password />
+      </Flex>
+    </Flex>
+  </Flex>
+</Box>
+    )
 
     );
 }

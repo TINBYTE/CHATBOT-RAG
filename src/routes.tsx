@@ -25,21 +25,21 @@ if ( token ) {
 const routes: IRoute[] = [
   
   {
-    name: 'New Chat',
-    path: '/new-chat',
+    name: 'CHAT',
+    path: '/chat',
     icon: <Icon as={MdAddCircle} width="20px" height="20px" color="inherit" />,
     collapse: false ,
   },
   {
     name: 'History Chat',
-    path: '/history-chat',
+    path: '/history',
     icon: <Icon as={MdInsertChartOutlined} width="20px" height="20px" color="inherit" />,
     collapse: true,
     items: [
       {
         name: 'Chat 1',
         layout: '/history-chat',
-        path: '/chat-1',
+        path: '/chat1',
       },
       {
         name: 'Chat 2',

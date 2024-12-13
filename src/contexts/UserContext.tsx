@@ -1,17 +1,17 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 
-type User = {
+interface User {
   id: string;
   username: string;
   email: string;
   // Add any other properties of the user object
-};
+}
 
-type UserContextType = {
+interface UserContextType {
   user: User | null;
   setUser: React.Dispatch<React.SetStateAction<User | null>>;
   logout: () => void;
-};
+}
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 

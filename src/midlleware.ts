@@ -37,5 +37,5 @@ export function middleware(request: Request) {
 }
 
 export const config = {
-  matcher: ['/chat/:path*'], // Protect /chat and its subpaths
+  matcher: ['/chat/:path*','/profile'], // Protect /chat and its subpaths
 };
