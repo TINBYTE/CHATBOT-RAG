@@ -1,27 +1,53 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import CryptoJS from 'crypto-js';
+type User = {
+  id: string;
+  username: string;
+  email: string;
+  // Add any other properties of the user object
+};
 
-interface User {
-  id?: string;
-  email?: string;
-  username?: string;
-  // Add more fields as necessary
-}
-
-interface UserContextProps {
+type UserContextType = {
   user: User | null;
-  setUser: (user: User) => void;
-  logout: () => void; // Add logout to the context
-}
+  setUser: React.Dispatch<React.SetStateAction<User | null>>;
+  logout: () => void;
+};
 
-const UserContext = createContext<UserContextProps | undefined>(undefined);
+const encryptionKey = process.env.NEXT_PUBLIC_ENCRYPTION_KEY || 'fallback-key';
 
-export const UserProvider = ({ children }: { children: ReactNode }) => {
+const UserContext = createContext<UserContextType | undefined>(undefined);
+
+export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
 
-  // Logout function
+  useEffect(() => {
+    const encryptedToken = localStorage.getItem('token');
+    if (encryptedToken) {
+      try {
+        const decryptedToken = CryptoJS.AES.decrypt(encryptedToken, encryptionKey).toString(CryptoJS.enc.Utf8);
+        if (decryptedToken) {
+          fetch('/api/profile/getuser', {
+            headers: { Authorization: `Bearer ${decryptedToken}` },
+          })
+            .then((res) => {
+              if (!res.ok) throw new Error('Failed to fetch user data');
+              console.log("ressssssssssssssssssssssssssssss",res);
+              
+              return res.json();
+            })
+            .then((userData) => setUser(userData))
+            .catch(() => localStorage.removeItem('token'));
+        }
+      } catch {
+        console.error('Failed to decrypt token');
+        localStorage.removeItem('token');
+      }
+    }
+  }, []);
+
   const logout = () => {
-    localStorage.removeItem('token'); // Remove token from localStorage
-    setUser(null); // Clear user state
+    localStorage.removeItem('token');
+    setUser(null);
   };
 
   return (
@@ -31,7 +57,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
-export const useUser = (): UserContextProps => {
+export const useUser = () => {
   const context = useContext(UserContext);
   if (!context) {
     throw new Error('useUser must be used within a UserProvider');

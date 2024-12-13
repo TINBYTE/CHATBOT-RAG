@@ -15,6 +15,7 @@ import '@/styles/Contact.css';
 import '@/styles/Plugins.css';
 import '@/styles/MiniCalendar.css';
 import AppWrappers from '../AppWrappers';
+import { UserProvider } from '@/contexts/UserContext';
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
@@ -63,7 +64,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                   minH="100vh"
                   pt="50px"
                 >
-                  {children}
+                  <UserProvider >
+                    {children}
+                  </UserProvider>
                 </Box>
                 <Box>
                   <Footer />

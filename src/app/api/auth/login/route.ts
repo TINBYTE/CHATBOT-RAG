@@ -15,7 +15,6 @@ export async function POST(request: Request) {
     const connection = await CreateConnectionDB();
     const [rows]: any = await connection.execute('SELECT * FROM users WHERE email = ?', [email]);
     
-    console.log('rows', rows[0].password);
 
     // Check if user exists
     if (rows.length === 0) {
