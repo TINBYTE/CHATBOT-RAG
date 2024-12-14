@@ -16,11 +16,19 @@ import FixedPlugin from "@/components/fixedPlugin/FixedPlugin";
 import AuthNavbar from "@/components/navbar/NavbarAuth";
 import HeaderLinks from "@/components/navbar/NavbarLinksAdmin";
 import Footer from "@/components/footer/FooterAuthCentered";
+import { useEffect, useState } from "react";
 
 export default function HeroSection() {
   const { isOpen, onToggle } = useDisclosure();
+  const [user, setUser] = useState(null);
 
-  //
+  useEffect(() => {
+    const storedUser = localStorage.getItem("usertoken");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+  }, []);
+
   // Chakra color mode
   const textColor = useColorModeValue('navy.700', 'white');
   const textColorSecondary = 'gray.400';
@@ -68,26 +76,41 @@ export default function HeroSection() {
         </Flex>
 
         <Flex display={{ base: "none", md: "flex" }} gap={8} align="center">
-          <Link href="/auth/register">
-            <Text
-              color={textColorBrand}
-              as="span"
-              ms="5px"
-              fontWeight="500"
-            >
-              Sign Up
-            </Text>
-          </Link>
-          <Link href="/auth/login">
-            <Text
-              color={textColorBrand}
-              as="span"
-              ms="5px"
-              fontWeight="500"
-            >
-              Sign in
-            </Text>
-          </Link>
+          {user ? (
+            <Link href="/profile">
+              <Text
+                color={textColorBrand}
+                as="span"
+                ms="5px"
+                fontWeight="500"
+              >
+                Profile
+              </Text>
+            </Link>
+          ) : (
+            <>
+              <Link href="/auth/register">
+                <Text
+                  color={textColorBrand}
+                  as="span"
+                  ms="5px"
+                  fontWeight="500"
+                >
+                  Sign Up
+                </Text>
+              </Link>
+              <Link href="/auth/login">
+                <Text
+                  color={textColorBrand}
+                  as="span"
+                  ms="5px"
+                  fontWeight="500"
+                >
+                  Sign in
+                </Text>
+              </Link>
+            </>
+          )}
         </Flex>
 
         <Button
@@ -116,20 +139,32 @@ export default function HeroSection() {
                   {item}
                 </Link>
               ))}
-              <Button variant="ghost" fontSize="sm" color="black">
-                Log In
-              </Button>
-              <Button
-                bg="purple.500"
-                color="white"
-                px={4}
-                py={2}
-                rounded="xl"
-                _hover={{ bg: "purple.600" }}
-                _focus={{ bg: "purple.700" }}
-              >
-                Sign Up
-              </Button>
+              {user ? (
+                <Link variant="ghost" fontSize="sm" color="black" href="/profile">
+                  Profile
+                </Link>
+              ) : (
+                <>
+                  <Link variant="ghost" fontSize="sm" color="black" href="/auth/login">
+                    Log In
+                  </Link>
+                  <Link
+                    bg="purple.500"
+                    color="white"
+                    px={4}
+                    py={2}
+                    rounded="xl"
+                    _hover={{ bg: "purple.600" }}
+                    _focus={{ bg: "purple.700" }}
+                    href="/auth/register"
+                    display="inline-flex"
+                    alignItems="center"
+                    justifyContent="center"
+                  >
+                    Sign Up
+                  </Link>
+                </>
+              )}
             </Stack>
           </Box>
         )}
@@ -193,7 +228,6 @@ export default function HeroSection() {
               _focus={{ bg: "purple.700" }}
               >
               <Text
-
                 color={textColor}
                 as="span"
                 ms="5px"
@@ -205,8 +239,6 @@ export default function HeroSection() {
 
           </Flex>
         </Box>
-
-
       </Flex>
       <FixedPlugin />
       <Footer />
