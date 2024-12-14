@@ -93,7 +93,7 @@ export default function HeaderLinks(props: {
           />
           <Center top={0} left={0} position={'absolute'} w={'100%'} h={'100%'}>
             <Text fontSize={'xs'} fontWeight="bold" color={'white'}>
-              AP
+              {user?.username ? user.username.substring(0, 2).toUpperCase() : 'GU'}
             </Text>
           </Center>
         </MenuButton>
@@ -121,7 +121,7 @@ export default function HeaderLinks(props: {
             </Text>
           </Flex>
           <Flex flexDirection="column" p="10px">
-            <NavLink href="/profile">
+            <NavLink href="/settings">
               <MenuItem
                 _hover={{ bg: 'none' }}
                 _focus={{ bg: 'none' }}

@@ -14,16 +14,19 @@
     "noEmit": true,
     "jsx": "preserve",
     "esModuleInterop": true,
-    "moduleResolution": "nodenext",
+    "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "incremental": true,
     "paths": {
       "@/*": [
-      "./src/*"
+        "./src/*"
+      ],
+      "@/app/*": [
+        "./app/*"
       ],
       "@/public/*": [
-      "./public/*"
+        "./public/*"
       ]
     },
     "plugins": [
@@ -37,7 +40,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts"
-, "postcss.config.mjs"  ],
+  ],
   "exclude": [
     "node_modules"
   ]

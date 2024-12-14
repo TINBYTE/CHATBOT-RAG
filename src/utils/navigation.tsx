@@ -19,7 +19,7 @@ export const findCurrentRoute = (
 
 export const getActiveRoute = (routes: IRoute[], pathname: string): string => {
   const route = findCurrentRoute(routes, pathname);
-  return route?.name || 'NEXT RAG';
+  return route?.name || 'Default Brand Text';
 };
 
 export const getActiveNavbar = (

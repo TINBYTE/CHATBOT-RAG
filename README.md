@@ -1,132 +1,97 @@
-# MASD-QUIZ Web Application
+# [Horizon ChatGPT AI Template](https://horizon-ui.com/chatgpt-ai-template) [![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social&logo=twitter)](https://twitter.com/intent/tweet?text=Check%20Horizon%20ChatGPT%20AI%20Template,%20the%20trendiest%20open%20source%20ChatGPT%20AI%20admin%20template%20for%20%23nextjs%20and%20%23react!%0A%0Ahttps%3A//horizon-ui.com/chatgpt-ai-template/%20%20)
 
-MASD-QUIZ is a modern, AI-powered quiz and exam generation web application built using **Next.js**. The app provides an interactive user interface for students and educators to access dynamically generated quizzes and receive instant feedback.
+![version](https://img.shields.io/badge/version-2.2.0-brightgreen.svg)
+[![GitHub issues open](https://img.shields.io/github/issues/horizon-ui/chatgpt-ai-template.svg?maxAge=2592000)](https://github.com/horizon-ui/chatgpt-ai-template/issues?q=is%3Aopen+is%3Aissue)
 
----
+<p>&nbsp;</p>
 
-## Features
+[<img alt="Horizon UI - Tailwind CSS React Admin dashboard template" src="https://i.ibb.co/mqnbX1Y/horizon-ai-template-presentation-image-open-source.png" />](https://horizon-ui.com/ai-template)
 
-- **Dynamic Quiz Generation**: Uses AI-powered tools to fetch and present personalized quizzes.
-- **Real-Time Feedback**: Provides detailed feedback after quiz submission.
-- **Interactive UI**: Built with Chakra UI and Tailwind CSS for a modern and responsive design.
-- **Scalable and Modular Architecture**: Easily extensible for additional features.
+<p>&nbsp;</p>
 
----
-
-## Tech Stack
-
-- **Frontend Framework**: [Next.js](https://nextjs.org/) (v14.2.18)
-- **UI Libraries**:
-  - [Chakra UI](https://chakra-ui.com/)
-  - [Tailwind CSS](https://tailwindcss.com/)
-- **React Ecosystem**:
-  - [React Icons](https://react-icons.github.io/react-icons/)
-  - [Framer Motion](https://www.framer.com/motion/) (for animations)
-- **Code Formatting**: Prettier with Tailwind CSS plugin
-- **TypeScript**: Ensures type safety across the application.
+Get started and build your dream AI web app with Horizon AI Template, the trendiest & innovative Open-Source Free ChatGPT AI Admin Template for NextJS & React!
 
 ---
 
-## Installation
+### Introduction
 
-1. Clone the repository:
+Horizon ChatGPT AI Template is the world's best open source OpenAI ChatGPT AI Template made with React, NextJS and Chakra UI! Start creating outstanding Chat AI SaaS Apps faster.
 
-   ```bash
-   git clone https://github.com/<your-username>/masd-quiz.git
-   cd masd-quiz
-   ```
+It comes with over 30+ dark/light frontend individual elements, like buttons, inputs, navbars, nav tabs, cards, or alerts, giving you the freedom of choosing and combining.
 
-2. Install dependencies:
+### Documentation
 
-   ```bash
-   npm install
-   ```
+Each element is well presented in a very complex documentation. You can read more about the <a href="https://horizon-ui.com/docs-ai-template/docs/introduction?ref=readme-horizon-ai-template-free" target="_blank">documentation here.</a>
 
-3. Run the development server:
+### Quick Start
 
-   ```bash
-   npm run dev
-   ```
+Install Horizon ChatGPT AI Template by running either of the following:
 
-4. Open your browser and navigate to `http://localhost:3000`.
+- Install NodeJS LTS from [NodeJs Official Page](https://nodejs.org/en/?ref=horizon-documentation) (NOTE: Product only works with LTS version)
 
----
+Clone the repository with the following command:
 
-## Project Structure
-
-Here's an overview of the project structure:
-
-```
-masd-quiz/
-├── components/          # Reusable UI components
-├── pages/               # Application pages
-│   ├── api/             # API routes for data fetching
-│   └── index.tsx        # Home page
-├── public/              # Static assets (images, icons, etc.)
-├── styles/              # Global and module-specific styles
-├── utils/               # Helper functions and utilities
-├── package.json         # Project dependencies and scripts
-└── tsconfig.json        # TypeScript configuration
+```bash
+git clone https://github.com/horizon-ui/chatgpt-ai-template.git
 ```
 
----
+Run in the terminal this command:
 
-## Scripts
+```bash
+npm install
+```
 
-The following scripts are available in the project:
+Then run this command to start your local server
 
-- `npm run dev`: Starts the development server.
-- `npm run build`: Builds the project for production.
-- `npm start`: Runs the built project in production mode.
-- `npm run lint`: Lints the code for style and formatting issues.
+```bash
+npm run dev
+```
 
----
+### Your API Key is not working?
 
-## Dependencies
+- Make sure you have an [OpenAI account](https://platform.openai.com/account) and a valid API key to use ChatGPT. We don't sell API keys.
+- Make sure you have your billing info added in [OpenAI Billing page](https://platform.openai.com/account/billing/overview). Without billing info, your API key will not work.
+- The app will connect to the OpenAI API server to check if your API Key is working properly.
 
-Key dependencies used in the project:
+### Example Page
 
-- **@chakra-ui/react**: For UI components
-- **Tailwind CSS**: For responsive design
-- **React Icons**: Icon library
-- **Framer Motion**: Smooth animations
-- **TypeScript**: Ensures type safety
-- **Next.js**: The framework for building the application
+If you want to get inspiration or just show something directly to your clients, you can jump start your development with our pre-built example page. You will be able to quickly set up the basic structure for your web project.
 
-Refer to the `package.json` file for the full list of dependencies.
+View <a href="https://horizon-ui.com/chatgpt-ai-template/?ref=readme-horizon-ai-template-free" target="_blank">example pages here.</a>
 
----
+### Versions
 
-## Feedback Generation Process
+| Free Version                                                                                                                                                         | PRO Version                                                                                                                                                                   |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [![Horizon ChatGPT AI Template](https://i.ibb.co/Qmym1qt/horizon-ai-template-presentation-image-open-source.png)](https://github.com/horizon-ui/chatgpt-ai-template) | [![Horizon AI Template PRO](https://i.ibb.co/ChL2fvf/horizon-ai-template-presentation-image.png)](https://www.horizon-ui.com/ai-template?ref=readme-horizon-ai-template-free) |
 
-1. **Fetch Questions**: Data is retrieved from the backend RAG model.
-2. **Interactive QCM**: Users interact with the quiz through the web interface.
-3. **Answer Verification**: Submitted answers are sent to the backend for evaluation.
-4. **Instant Feedback**: Grading results and explanations are displayed to the user.
+### Figma Version
 
----
+Horizon AI Template is available in Figma format as well! [Check it out here](https://www.figma.com/community/file/1253038328954459768)! 🎨
 
-## Contributing
+### Reporting Issues
 
-We welcome contributions! Please follow these steps:
+We use GitHub Issues as the official bug tracker for the Horizon UI. Here are
+some advices for our users that want to report an issue:
 
-1. Fork the repository.
-2. Create a new branch: `git checkout -b feature/your-feature-name`.
-3. Commit your changes: `git commit -m 'Add some feature'`.
-4. Push to the branch: `git push origin feature/your-feature-name`.
-5. Open a pull request.
-
----
-
-## License
-
-This project is licensed under the MIT License. See the `LICENSE` file for details.
+1. Make sure that you are using the latest version of the Horizon AI Template.
+   Check the CHANGELOG from your dashboard on our
+   [CHANGE LOG File](https://github.com/horizon-ui/chatgpt-ai-template/blob/main/CHANGELOG.md?ref=readme-horizon-ai-template-free).
+2. Providing us reproducible steps for the issue will shorten the time it takes
+   for it to be fixed.
+3. Some issues may be browser specific, so specifying in what browser you
+   encountered the issue might help.
 
 ---
 
-## Acknowledgments
+### Community
 
-Special thanks to the MASD-QUIZ team for their hard work and dedication:
- 
-- **Nordin & Youssef**: Knowledge Base Construction, Document Retrieval , Preprocessing and Question Generation .
-- **Abdelfattah Bouhlali**: Answer Verification & User Interface Development  
+Connect with the community! Feel free to ask questions, report issues, and meet new people that already use Horizon AI Template!
+
+💬 [Join the #HorizonUI Discord Community!](https://discord.gg/f6tEKFBd4m)
+
+### Copyright and license
+
+⭐️ [Copyright 2023 Horizon UI ](https://www.horizon-ui.com/?ref=readme-horizon-ai-template-free)
+
+📄 [Horizon UI License](https://horizon-ui.notion.site/End-User-License-Agreement-8fb09441ea8c4c08b60c37996195a6d5)

@@ -30,7 +30,6 @@ import { useRouter } from 'next/navigation';
 
 interface SidebarContent extends PropsWithChildren {
   routes: IRoute[];
-  [x: string]: any;
 }
 
 function SidebarContent(props: SidebarContent) {
@@ -123,7 +122,7 @@ function SidebarContent(props: SidebarContent) {
           border="none"
         >
           <Flex flexDirection="column" p="10px">
-            <NavLink href="/profile">
+            <NavLink href="/settings">
               <MenuItem
                 _hover={{ bg: 'none' }}
                 _focus={{ bg: 'none' }}

@@ -28,7 +28,6 @@ import { isWindowAvailable } from '@/utils/navigation';
 
 export interface SidebarProps extends PropsWithChildren {
   routes: IRoute[];
-  [x: string]: any;
 }
 
 function Sidebar(props: SidebarProps) {

@@ -1,18 +1,13 @@
-import { StreamLanguage } from '@codemirror/language';
-import { go } from '@codemirror/legacy-modes/mode/go';
-import { tokyoNight } from '@uiw/codemirror-theme-tokyo-night';
-import CodeMirror from '@uiw/react-codemirror';
+import ReactMarkdown from 'react-markdown';
 import { FC, useEffect, useState } from 'react';
 
 interface Props {
   code: string;
-  height: string;
   editable?: boolean;
   onChange?: (value: string) => void;
 }
 
-export const CodeBlock: FC<Props> = ({
-  height,
+export const MarkdownBlock: FC<Props> = ({
   code,
   editable = false,
   onChange = () => {},
@@ -28,7 +23,7 @@ export const CodeBlock: FC<Props> = ({
   }, [copyText]);
 
   return (
-    <div className={`relative h-${height}px overflow-scroll`}>
+    <div className="relative">
       <button
         className="absolute right-0 top-0 z-10 rounded bg-[#1A1B26] p-1 text-xs text-white hover:bg-[#2D2E3A] active:bg-[#2D2E3A]"
         onClick={() => {
@@ -37,16 +32,11 @@ export const CodeBlock: FC<Props> = ({
         }}
       >
         {copyText}
-      </button> 
-      <CodeMirror
-        editable={editable}
-        value={code}
-        minHeight={`${height}px`}
-        className="rounded-md overflow-scroll"
-        extensions={[StreamLanguage.define(go)]}
-        theme={tokyoNight}
-        onChange={(value) => onChange(value)}
-      />
+      </button>
+
+      <div className="p-4 h-500px bg-[#1A1B26] text-white overflow-scroll rounded-md">
+        <ReactMarkdown className="font-normal">{code}</ReactMarkdown>
+      </div>
     </div>
   );
 };
