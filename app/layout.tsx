@@ -15,6 +15,7 @@ import '@/styles/Contact.css';
 import '@/styles/Plugins.css';
 import '@/styles/MiniCalendar.css';
 import AppWrappers from './AppWrappers';
+import RootHead from './head';
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
@@ -30,13 +31,14 @@ export default function RootLayout({ children }: { children: ReactNode }) {
 
   return (
     <html lang="en">
+      <RootHead/>
       <body id={'root'}>
         <AppWrappers>
           {/* <ChakraProvider theme={theme}> */}
           {pathname?.includes('register') || 
           pathname?.includes('login') || 
-          pathname?.includes('home') || 
-          pathname?.includes('forgot-password')
+          pathname?.includes('forgot-password') ||
+          pathname?.includes('home')
           ? (
             children
           ) : (

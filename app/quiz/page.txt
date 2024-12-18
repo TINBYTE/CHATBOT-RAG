@@ -18,61 +18,9 @@ import { useRouter, useSearchParams } from 'next/navigation';
 const QuizPage: React.FC = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const quizId = searchParams.get('quizId'); // Extract quizId from the URL
   const prompt = searchParams.get('prompt'); // Extract prompt from the URL
 
-  const staticQuizData = {
-    title: 'SQL Basics Quiz',
-    questions: [
-      {
-        id: 1,
-        text: 'Which SQL keyword is used to retrieve data from a database?',
-        type: 'mcq',
-        options: ['INSERT', 'DELETE', 'SELECT', 'UPDATE'],
-        correct_option: 2,
-        explanation: 'The SELECT statement is used to retrieve data from a database.',
-      },
-      {
-        id: 2,
-        text: 'What does the SQL JOIN operation do?',
-        type: 'mcq',
-        options: [
-          'Deletes rows from a table',
-          'Combines rows from two or more tables',
-          'Updates rows in a table',
-          'Adds a new table to the database',
-        ],
-        correct_option: 1,
-        explanation: 'JOIN is used to combine rows from two or more tables.',
-      },
-      {
-        id: 3,
-        text: 'Which SQL clause is used to filter records?',
-        type: 'mcq',
-        options: ['WHERE', 'GROUP BY', 'ORDER BY', 'HAVING'],
-        correct_option: 0,
-        explanation: 'The WHERE clause is used to filter records in a query.',
-      },
-      {
-        id: 4,
-        text: 'What is the default sorting order in SQL?',
-        type: 'mcq',
-        options: ['ASCENDING', 'DESCENDING', 'RANDOM', 'NONE'],
-        correct_option: 0,
-        explanation: 'The default sorting order in SQL is ASCENDING.',
-      },
-      {
-        id: 5,
-        text: 'Which of the following is a valid SQL data type?',
-        type: 'mcq',
-        options: ['STRING', 'INTEGER', 'FLOAT', 'BOOLEAN'],
-        correct_option: 1,
-        explanation: 'INTEGER is a valid SQL data type.',
-      },
-    ],
-  };
-
-  const [quizData] = useState(staticQuizData); // Static data for quiz
+  const [quizData, setQuizData] = useState<any | null>(null);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const [isAnswered, setIsAnswered] = useState(false);
@@ -87,7 +35,42 @@ const QuizPage: React.FC = () => {
     const usertoken = localStorage.getItem('usertoken');
     if (!usertoken) {
       router.push('/auth/login');
+      return;
     }
+
+    // Simulate fetching quiz data based on the prompt
+    const fetchQuiz = async () => {
+      // Replace this mock with an actual API call
+      const mockQuizData = {
+        title: 'SQL Basics Quiz',
+        questions: [
+          {
+            id: 1,
+            text: 'Which SQL keyword is used to retrieve data from a database?',
+            type: 'mcq',
+            options: ['INSERT', 'DELETE', 'SELECT', 'UPDATE'],
+            correct_option: 2,
+            explanation: 'The SELECT statement is used to retrieve data from a database.',
+          },
+          {
+            id: 2,
+            text: 'What does the SQL JOIN operation do?',
+            type: 'mcq',
+            options: [
+              'Deletes rows from a table',
+              'Combines rows from two or more tables',
+              'Updates rows in a table',
+              'Adds a new table to the database',
+            ],
+            correct_option: 1,
+            explanation: 'JOIN is used to combine rows from two or more tables.',
+          },
+        ],
+      };
+      setQuizData(mockQuizData);
+    };
+
+    fetchQuiz();
   }, [router]);
 
   useEffect(() => {
@@ -141,16 +124,14 @@ const QuizPage: React.FC = () => {
 
   const saveQuizResults = async () => {
     try {
-      const user = JSON.parse(localStorage.getItem('usertoken') || '{}');
-
-      const response = await fetch('/api/quiz/submit', {
+      const response = await fetch('/api/quiz/save', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          quizId,
-          userId: user.id,
+          quizId: 1, // Assuming quizId is 1, replace with actual quizId
+          userId: 1, // Assuming userId is 1, replace with actual userId from authentication
           score: (score / quizData.questions.length) * 100,
           passed: score >= quizData.questions.length / 2,
           userAnswers,

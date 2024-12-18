@@ -1,4 +1,5 @@
 'use client';
+
 import {
     Button,
     Flex,
@@ -6,32 +7,70 @@ import {
     Input,
     Text,
     useColorModeValue,
+    Select,
+    NumberInput,
+    NumberInputField,
+    VStack,
+    Box,
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import Bg from '@/public/img/chat/bg-image.png';
 import { useRouter } from 'next/navigation';
+
 export default function Chat() {
     const router = useRouter();
     const [prompt, setPrompt] = useState('');
+    const [questionNbr, setQuestionNbr] = useState(5);
+    const [difficulty, setDifficulty] = useState('intermediate');
+    const [questionType, setQuestionType] = useState('mcq');
     const [loading, setLoading] = useState<boolean>(false);
 
-    const borderColor = useColorModeValue('gray.200', 'whiteAlpha.200');
-    const inputColor = useColorModeValue('navy.700', 'white');
-    const textColor = useColorModeValue('navy.700', 'white');
-    const placeholderColor = useColorModeValue(
-        { color: 'gray.500' },
-        { color: 'whiteAlpha.600' },
-    );
+    const borderColor = useColorModeValue('gray.300', 'whiteAlpha.300');
+    const inputColor = useColorModeValue('navy.800', 'white');
+    const textColor = useColorModeValue('navy.800', 'white');
+    const placeholderColor = useColorModeValue('gray.500', 'whiteAlpha.600');
+    const bgColor = useColorModeValue('gray.50', 'gray.800');
 
-    const handleGenerateQuiz = () => {
-
+    const handleGenerateQuiz = async () => {
         setLoading(true);
-        setTimeout(() => {
+
+        try {
+            const user = JSON.parse(localStorage.getItem('usertoken') || '{}');
+
+            if (!user || !user.id) {
+                throw new Error('User not logged in');
+            }
+
+            const response = await fetch('/api/quiz/createquiz', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    userId: user.id,
+                    prompt,
+                    title: `Quiz: ${prompt}`,
+                    questionNbr,
+                    difficulty,
+                    questionType,
+                }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || 'Failed to create quiz');
+            }
+
+            const { quizId } = data;
+
+            router.push(`/quiz?quizId=${quizId}&prompt=${encodeURIComponent(prompt)}`);
+        } catch (error) {
+            console.error('Error generating quiz:', error);
+            alert('Failed to generate quiz. Please try again.');
+        } finally {
             setLoading(false);
-            setTimeout(() => {
-                router.push(`/quiz?prompt=${encodeURIComponent(prompt)}`);
-            }, 1000);
-        }, 2000);
+        }
     };
 
     useEffect(() => {
@@ -44,91 +83,116 @@ export default function Chat() {
     return (
         <Flex
             w="100%"
-            pt={{ base: '70px', md: '0px' }}
             direction="column"
+            align="center"
+            justify="center"
+            minH="100vh"
+            bg={bgColor}
             position="relative"
         >
             <Img
                 src={Bg.src}
-                position={'absolute'}
+                position="absolute"
                 w="350px"
                 left="50%"
                 top="50%"
-                transform={'translate(-50%, -50%)'}
+                transform="translate(-50%, -50%)"
+                opacity={0.1}
+                zIndex={-1}
             />
-            <Flex
-                direction="column"
-                mx="auto"
-                w={{ base: '100%', md: '100%', xl: '100%' }}
-                minH={{ base: '75vh', '2xl': '85vh' }}
-                maxW="1000px"
-                justifyContent="center"
+            <Box
+                w={{ base: '90%', sm: '80%', md: '70%', lg: '50%' }}
+                bg="white"
+                borderRadius="md"
+                boxShadow="lg"
+                p={8}
+                zIndex={1}
             >
-                {/* Chat Input */}
-                <Flex
-                    ms={{ base: '0px', xl: '60px' }}
-                    mt="20px"
-                    justifySelf={'flex-end'}
-                    direction={{ base: 'column', md: 'row' }}
+                {/* Title */}
+                <Text
+                    fontSize="2xl"
+                    fontWeight="bold"
+                    textAlign="center"
+                    mb={6}
+                    color={textColor}
                 >
+                    Configurez votre Quiz SQL
+                </Text>
+
+                {/* Form */}
+                <VStack spacing={4} align="stretch">
+                    {/* Prompt Input */}
                     <Input
-                        minH="54px"
-                        h="100%"
-                        border="1px solid"
-                        borderColor={borderColor}
-                        borderRadius="45px"
-                        p="15px 20px"
-                        me={{ base: '0px', md: '10px' }}
-                        mb={{ base: '10px', md: '0px' }}
-                        fontSize="sm"
-                        fontWeight="500"
-                        _focus={{ borderColor: 'none' }}
-                        color={inputColor}
-                        _placeholder={placeholderColor}
-                        placeholder="e.g., Create a quiz about SQL basics"
+                        placeholder="Entrez votre requête SQL, ex: Les jointures en SQL"
                         value={prompt}
                         onChange={(e) => setPrompt(e.target.value)}
+                        minH="54px"
+                        borderColor={borderColor}
+                        _focus={{ borderColor: 'blue.500' }}
+                        color={inputColor}
+                        _placeholder={{ color: placeholderColor }}
+                        required
                     />
-                    <Button
-                        variant="primary"
-                        py="20px"
-                        px="16px"
-                        fontSize="sm"
-                        borderRadius="45px"
-                        ms="auto"
-                        mx={{ base: 'auto', md: '0' }} // Center the button when small
-                        w={{ base: '100%', md: '210px' }} // Full width on small screens
-                        h="54px"
-                        _hover={{
-                            boxShadow:
-                                '0px 21px 27px -10px rgba(96, 60, 255, 0.48) !important',
-                            bg: 'linear-gradient(15.46deg, #4A25E1 26.3%, #7B5AFF 86.4%) !important',
-                            _disabled: {
-                                bg: 'linear-gradient(15.46deg, #4A25E1 26.3%, #7B5AFF 86.4%)',
-                            },
-                        }}
-                        onClick={handleGenerateQuiz}
-                        isLoading={loading ? true : false}
-                    >
-                        Submit
-                    </Button>
 
-                </Flex>
-
-                <Flex
-                    direction="column"
-                    alignItems="center"
-                    justifyContent="center"
-                    mt="20px"
-                >
-                    {loading && (
-                        <Text mt="10px" color={textColor}>
-                            Your Quiz is Generating ...
+                    {/* Number of Questions */}
+                    <Box>
+                        <Text fontWeight="bold" mb={2} color={textColor}>
+                            Nombre de questions
                         </Text>
-                    )}
-                </Flex>
+                        <NumberInput
+                            value={questionNbr}
+                            onChange={(valueString) => setQuestionNbr(Number(valueString))}
+                            min={1}
+                            max={50}
+                        >
+                            <NumberInputField borderColor={borderColor} />
+                        </NumberInput>
+                    </Box>
 
-            </Flex>
+                    {/* Difficulty */}
+                    <Box>
+                        <Text fontWeight="bold" mb={2} color={textColor}>
+                            Difficulté
+                        </Text>
+                        <Select
+                            value={difficulty}
+                            onChange={(e) => setDifficulty(e.target.value)}
+                            borderColor={borderColor}
+                        >
+                            <option value="beginner">Débutant</option>
+                            <option value="intermediate">Intermédiaire</option>
+                            <option value="advanced">Avancé</option>
+                        </Select>
+                    </Box>
+
+                    {/* Question Type */}
+                    <Box>
+                        <Text fontWeight="bold" mb={2} color={textColor}>
+                            Type de questions
+                        </Text>
+                        <Select
+                            value={questionType}
+                            onChange={(e) => setQuestionType(e.target.value)}
+                            borderColor={borderColor}
+                        >
+                            <option value="mcq">QCM</option>
+                            <option value="open-ended">Questions ouvertes</option>
+                        </Select>
+                    </Box>
+
+                    {/* Submit Button */}
+                    <Button
+                        colorScheme="blue"
+                        size="lg"
+                        isLoading={loading}
+                        onClick={handleGenerateQuiz}
+                        _hover={{ bg: 'blue.600' }}
+                        borderRadius="md"
+                    >
+                        Générer le Quiz
+                    </Button>
+                </VStack>
+            </Box>
         </Flex>
     );
 }

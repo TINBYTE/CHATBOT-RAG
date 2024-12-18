@@ -1,0 +1,21 @@
+{
+    "quiz_id": 101,
+    "user_id": 1,
+    "score": 100.00,
+    "passed": true,
+    "feedback": [
+      {
+        "question_id": 1,
+        "user_response": "SELECT",
+        "is_correct": true,
+        "explanation": "Correct! The SELECT statement retrieves data."
+      },
+      {
+        "question_id": 2,
+        "user_response": "Combines rows from two or more tables",
+        "is_correct": true,
+        "explanation": "Correct! JOIN combines rows from multiple tables."
+      }
+    ]
+  }
+  

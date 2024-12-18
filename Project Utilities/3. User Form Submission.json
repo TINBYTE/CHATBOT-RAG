@@ -1,0 +1,17 @@
+{
+    "user_id": 1,
+    "quiz_id": 101,
+    "responses": [
+      {
+        "question_id": 1,
+        "user_response": "SELECT",
+        "option_index": 2
+      },
+      {
+        "question_id": 2,
+        "user_response": "Combines rows from two or more tables",
+        "option_index": 1
+      }
+    ]
+  }
+  
