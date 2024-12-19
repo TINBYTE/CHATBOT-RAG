@@ -1,10 +1,9 @@
 import { NextResponse } from 'next/server';
-import CreateConnectionDB from '@/app/api/utils/db'; // Adjust the path if needed
-import { ResultSetHeader } from 'mysql2'; // Import the correct type
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
 
 export async function POST(req: Request) {
-    const connection = await CreateConnectionDB();
-
     try {
         const body = await req.json();
         const { quizId, userId, score, passed, userAnswers } = body;
@@ -15,37 +14,42 @@ export async function POST(req: Request) {
         }
 
         // Start transaction
-        await connection.beginTransaction();
-
+        const createAttempt = await prisma.$transaction(async (tx) => {
         // Insert the quiz attempt into the `quiz_attempts` table
-        const [attemptResult] = await connection.execute<ResultSetHeader>(
-            `INSERT INTO quiz_attempts (quiz_id, user_id, score, passed) VALUES (?, ?, ?, ?)`,
-            [quizId, userId, score, passed]
-        );
+         const attempt = await tx.quizAttempt.create({
+              data: {
+                quizId: parseInt(quizId),
+                userId: parseInt(userId),
+                score: parseFloat(String(score)),
+                passed: passed,
+              },
+          });
 
-        const attemptId = attemptResult.insertId; // Correctly access the insertId property
 
         // Insert user answers into the `user_answers` table
-        const userAnswersPromises = userAnswers.map((answer: any) => {
-            const { questionId, userResponse, isCorrect } = answer;
-            return connection.execute(
-                `INSERT INTO user_answers (attempt_id, question_id, user_response, is_correct) VALUES (?, ?, ?, ?)`,
-                [attemptId, questionId, userResponse, isCorrect]
-            );
+        const userAnswersPromises = userAnswers.map(async (answer: any) => {
+          const { questionId, userResponse, isCorrect } = answer;
+          return await tx.userAnswer.create({
+              data: {
+                  attemptId: attempt.id,
+                  questionId: parseInt(questionId),
+                  userResponse: userResponse,
+                  isCorrect: isCorrect,
+              },
+          });
         });
 
-        await Promise.all(userAnswersPromises);
 
-        // Commit the transaction
-        await connection.commit();
+       await Promise.all(userAnswersPromises);
+
+       return attempt
+      })
 
         return NextResponse.json({ message: 'Quiz results saved successfully!' }, { status: 200 });
     } catch (error) {
-        // Rollback transaction in case of error
-        await connection.rollback();
         console.error('Error saving quiz results:', error);
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
     } finally {
-        await connection.end(); // Ensure the connection is closed
+        await prisma.$disconnect()
     }
 }

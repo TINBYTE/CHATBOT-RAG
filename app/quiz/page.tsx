@@ -26,47 +26,67 @@ const QuizPage: React.FC = () => {
     questions: [
       {
         id: 1,
-        text: 'Which SQL keyword is used to retrieve data from a database?',
-        type: 'mcq',
-        options: ['INSERT', 'DELETE', 'SELECT', 'UPDATE'],
-        correct_option: 2,
+        questionText: 'Which SQL keyword is used to retrieve data from a database?',
+        questionType: 'mcq',
+        options: [
+          { id: 1, optionText: 'INSERT' },
+          { id: 2, optionText: 'DELETE' },
+          { id: 3, optionText: 'SELECT' },
+          { id: 4, optionText: 'UPDATE' },
+        ],
+        correctOption: 3,
         explanation: 'The SELECT statement is used to retrieve data from a database.',
       },
       {
         id: 2,
-        text: 'What does the SQL JOIN operation do?',
-        type: 'mcq',
+        questionText: 'What does the SQL JOIN operation do?',
+        questionType: 'mcq',
         options: [
-          'Deletes rows from a table',
-          'Combines rows from two or more tables',
-          'Updates rows in a table',
-          'Adds a new table to the database',
+          { id: 1, optionText: 'Deletes rows from a table' },
+          { id: 2, optionText: 'Combines rows from two or more tables' },
+          { id: 3, optionText: 'Updates rows in a table' },
+          { id: 4, optionText: 'Adds a new table to the database' },
         ],
-        correct_option: 1,
+        correctOption: 2,
         explanation: 'JOIN is used to combine rows from two or more tables.',
       },
       {
         id: 3,
-        text: 'Which SQL clause is used to filter records?',
-        type: 'mcq',
-        options: ['WHERE', 'GROUP BY', 'ORDER BY', 'HAVING'],
-        correct_option: 0,
+        questionText: 'Which SQL clause is used to filter records?',
+        questionType: 'mcq',
+        options: [
+          { id: 1, optionText: 'WHERE' },
+          { id: 2, optionText: 'GROUP BY' },
+          { id: 3, optionText: 'ORDER BY' },
+          { id: 4, optionText: 'HAVING' },
+        ],
+        correctOption: 1,
         explanation: 'The WHERE clause is used to filter records in a query.',
       },
       {
         id: 4,
-        text: 'What is the default sorting order in SQL?',
-        type: 'mcq',
-        options: ['ASCENDING', 'DESCENDING', 'RANDOM', 'NONE'],
-        correct_option: 0,
+        questionText: 'What is the default sorting order in SQL?',
+        questionType: 'mcq',
+        options: [
+          { id: 1, optionText: 'ASCENDING' },
+          { id: 2, optionText: 'DESCENDING' },
+          { id: 3, optionText: 'RANDOM' },
+          { id: 4, optionText: 'NONE' },
+        ],
+        correctOption: 1,
         explanation: 'The default sorting order in SQL is ASCENDING.',
       },
       {
         id: 5,
-        text: 'Which of the following is a valid SQL data type?',
-        type: 'mcq',
-        options: ['STRING', 'INTEGER', 'FLOAT', 'BOOLEAN'],
-        correct_option: 1,
+        questionText: 'Which of the following is a valid SQL data type?',
+        questionType: 'mcq',
+        options: [
+          { id: 1, optionText: 'STRING' },
+          { id: 2, optionText: 'INTEGER' },
+          { id: 3, optionText: 'FLOAT' },
+          { id: 4, optionText: 'BOOLEAN' },
+        ],
+        correctOption: 2,
         explanation: 'INTEGER is a valid SQL data type.',
       },
     ],
@@ -102,29 +122,29 @@ const QuizPage: React.FC = () => {
     return () => clearInterval(interval);
   }, [timer, quizCompleted]);
 
-  const handleAnswer = () => {
-    setIsAnswered(true);
-    const isCorrect = selectedOption === currentQuestion.correct_option;
+    const handleAnswer = () => {
+        setIsAnswered(true);
+        const isCorrect = selectedOption === currentQuestion.correctOption;
 
-    if (isCorrect) {
-      setScore((prevScore) => prevScore + 1);
-    }
+        if (isCorrect) {
+            setScore((prevScore) => prevScore + 1);
+        }
 
-    // Store the user's answer
-    setUserAnswers((prev) => [
-      ...prev,
-      {
-        questionId: currentQuestion.id,
-        userResponse: currentQuestion.options[selectedOption!],
-        isCorrect,
-      },
-    ]);
+        // Store the user's answer
+        setUserAnswers((prev) => [
+            ...prev,
+            {
+                questionId: currentQuestion.id,
+                userResponse: currentQuestion.options.find((option:any) => option.id === selectedOption)?.optionText,
+                isCorrect,
+            },
+        ]);
 
-    if (currentQuestionIndex === quizData.questions.length - 1) {
-      setQuizCompleted(true);
-      saveQuizResults(); // Save quiz results after the last question
-    }
-  };
+        if (currentQuestionIndex === quizData.questions.length - 1) {
+            setQuizCompleted(true);
+            saveQuizResults(); // Save quiz results after the last question
+        }
+    };
 
   const handleNextQuestion = () => {
     if (currentQuestionIndex < quizData.questions.length - 1) {
@@ -140,29 +160,29 @@ const QuizPage: React.FC = () => {
   };
 
   const saveQuizResults = async () => {
-    try {
-      const user = JSON.parse(localStorage.getItem('usertoken') || '{}');
+      try {
+          const user = JSON.parse(localStorage.getItem('usertoken') || '{}');
 
-      const response = await fetch('/api/quiz/submit', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          quizId,
-          userId: user.id,
-          score: (score / quizData.questions.length) * 100,
-          passed: score >= quizData.questions.length / 2,
-          userAnswers,
-        }),
-      });
+          const response = await fetch('/api/quiz/submit', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                  quizId,
+                  userId: user.id,
+                  score: (score / quizData.questions.length) * 100,
+                  passed: score >= quizData.questions.length / 2,
+                  userAnswers,
+              }),
+          });
 
-      if (!response.ok) {
-        throw new Error('Failed to save quiz results');
+          if (!response.ok) {
+              throw new Error('Failed to save quiz results');
+          }
+      } catch (error) {
+          console.error('Error saving quiz results:', error);
       }
-    } catch (error) {
-      console.error('Error saving quiz results:', error);
-    }
   };
 
   return (
@@ -173,15 +193,15 @@ const QuizPage: React.FC = () => {
 
       {!quizCompleted && quizData ? (
         <VStack spacing={4} align="stretch">
-          <Text>{currentQuestion.text}</Text>
+          <Text>{currentQuestion.questionText}</Text>
           <RadioGroup
             onChange={(value) => setSelectedOption(parseInt(value, 10))}
             value={selectedOption !== null ? selectedOption.toString() : undefined}
           >
             <Stack direction="column">
-              {currentQuestion.options.map((option: string, index: number) => (
-                <Radio key={index} value={index.toString()} isDisabled={isAnswered}>
-                  {option}
+              {currentQuestion.options.map((option: any, index: number) => (
+                <Radio key={index} value={option.id.toString()} isDisabled={isAnswered}>
+                  {option.optionText}
                 </Radio>
               ))}
             </Stack>

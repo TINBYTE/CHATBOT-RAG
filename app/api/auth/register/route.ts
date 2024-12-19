@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcrypt';
-import CreateConnectionDB from '../../utils/db';
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient(); // Instantiate Prisma Client
 
 export async function POST(req: NextRequest) {
     try {
@@ -12,16 +14,22 @@ export async function POST(req: NextRequest) {
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
-        const db = await CreateConnectionDB();
 
-        await db.execute(
-            'INSERT INTO users (username, password_hash , email) VALUES (?, ?, ?)',
-            [username, hashedPassword, email]
-        );
-
-        return NextResponse.json({ message: 'User registered successfully' }, { status: 201 });
-    } catch (error) {
+        const newUser = await prisma.user.create({
+            data: {
+                username,
+                passwordHash: hashedPassword,
+                email,
+            },
+        });
+        return NextResponse.json({ message: 'User registered successfully', user: newUser }, { status: 201 });
+    } catch (error:any) {
         console.error('Error during user registration:', error);
-        return NextResponse.json({ message: error }, { status: 500 });
+        if (error.code === 'P2002') { // Prisma error code for unique constraint violation
+            return NextResponse.json({ message: 'Username or Email already taken' }, { status: 400 });
+        }
+        return NextResponse.json({ message: 'An unexpected error occurred' }, { status: 500 });
+    } finally {
+        await prisma.$disconnect()
     }
 }

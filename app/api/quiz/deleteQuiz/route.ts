@@ -1,26 +1,32 @@
-import { NextApiRequest, NextApiResponse } from 'next';
-import { prisma } from '@/lib/prisma'; // Adjust according to your Prisma setup
+import { NextResponse } from 'next/server';
+import prisma from '@/lib/prisma'; // Import the Prisma client
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method === 'DELETE') {
-    try {
-      const { quizId } = req.body;
+export async function DELETE(req: Request) {
+  try {
+    const body = await req.json();
+    const { quizId } = body;
 
-      if (!quizId) {
-        return res.status(400).json({ error: 'Quiz ID is required' });
-      }
-
-      // Delete quiz from database
-      await prisma.quiz.delete({
-        where: { id: quizId },
-      });
-
-      return res.status(200).json({ message: 'Quiz deleted successfully' });
-    } catch (error) {
-      console.error('Error deleting quiz:', error);
-      return res.status(500).json({ error: 'Failed to delete quiz' });
+    if (!quizId) {
+      return NextResponse.json(
+        { error: 'Quiz ID is required' },
+        { status: 400 }
+      );
     }
-  } else {
-    return res.status(405).json({ error: 'Method not allowed' });
+
+    // Delete the quiz using Prisma
+    await prisma.quiz.delete({
+      where: { id: Number(quizId) },
+    });
+
+    return NextResponse.json(
+      { message: 'Quiz deleted successfully' },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error('Error deleting quiz:', error);
+    return NextResponse.json(
+      { error: 'Failed to delete quiz' },
+      { status: 500 }
+    );
   }
 }

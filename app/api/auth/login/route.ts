@@ -1,34 +1,31 @@
 import { NextResponse } from 'next/server';
 import bcrypt from 'bcrypt';
-import CreateConnectionDB from '@/app/api/utils/db';
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
 
 export async function POST(request: Request) {
   try {
     const { email, password } = await request.json();
-    
-   
+
     if (!email || !password) {
       return NextResponse.json({ message: 'Email and password are required.' }, { status: 400 });
     }
 
-    // Database connection
-    const connection = await CreateConnectionDB();
-    const [rows]: any = await connection.execute('SELECT * FROM users WHERE email = ?', [email]);
-    
+    // Find user by email
+    const user = await prisma.user.findUnique({
+      where: {
+        email: email,
+      },
+    });
 
     // Check if user exists
-    if (rows.length === 0) {
+    if (!user) {
       return NextResponse.json({ message: 'Invalid email or password.' }, { status: 401 });
     }
 
-    const user = rows[0];
-    const hashedPassword = user.password_hash;
-
-
-    
-
     // Verify password
-    const isPasswordValid = await bcrypt.compare(password, hashedPassword);
+    const isPasswordValid = await bcrypt.compare(password, user.passwordHash);
 
     if (!isPasswordValid) {
       return NextResponse.json({ message: 'Invalid email or password.' }, { status: 401 });
@@ -41,5 +38,7 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error('Login error:', error);
     return NextResponse.json({ message: 'Internal server error.' }, { status: 500 });
+  } finally {
+    await prisma.$disconnect();
   }
 }

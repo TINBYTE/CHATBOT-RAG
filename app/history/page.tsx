@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useUser } from '@/contexts/UserContext';
-import { Quiz } from '../types/db';
+import { Quiz } from '@/app/types/db';
 import {
   Box,
   Button,
@@ -48,6 +48,7 @@ const QuizHistoryPage = () => {
 
   // Delete a quiz by its ID
   const handleDeleteQuiz = async (quizId: string) => {
+    console.log('Deleting quiz:', quizId);
     try {
       const response = await fetch(`/api/quiz/deleteQuiz`, {
         method: 'DELETE',
@@ -59,7 +60,7 @@ const QuizHistoryPage = () => {
         throw new Error('Failed to delete quiz');
       }
 
-      setQuizzes((prevQuizzes) => prevQuizzes.filter((quiz) => quiz.id !== quizId));
+      setQuizzes((prevQuizzes) => prevQuizzes.filter((quiz) => quiz.id !== Number(quizId)));
       toast({
         title: 'Quiz deleted.',
         status: 'success',
@@ -105,7 +106,7 @@ const QuizHistoryPage = () => {
                 <Button
                   colorScheme="red"
                   mt={4}
-                  onClick={() => handleDeleteQuiz(quiz.id)}
+                  onClick={() => handleDeleteQuiz(quiz.id.toString())}
                   size="sm"
                 >
                   Delete

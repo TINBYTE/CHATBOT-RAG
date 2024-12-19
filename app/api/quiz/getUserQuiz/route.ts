@@ -1,11 +1,8 @@
-import { NextResponse } from 'next/server'; 
-import CreateConnectionDB from '@/app/api/utils/db';
-import { Quiz } from '@/app/types/db';
-import { RowDataPacket, FieldPacket } from 'mysql2';
+import { NextResponse } from 'next/server';
+import prisma from '@/lib/prisma'; // Import the Prisma client
 
 export async function GET(req: Request) {
   try {
-    // Get user ID from query params
     const { searchParams } = new URL(req.url);
     const userId = searchParams.get('userId');
 
@@ -16,32 +13,20 @@ export async function GET(req: Request) {
       );
     }
 
-    // Create a database connection
-    const connection = await CreateConnectionDB();
+    // Fetch quizzes for the user using Prisma
+    const quizzes = await prisma.quiz.findMany({
+      where: { userId: Number(userId) },
+      orderBy: { createdAt: 'desc' },
+      include: {
+        questions: true, // Optional: Include related questions
+      },
+    });
 
-    try {
-      const [queryResult]: [RowDataPacket[], FieldPacket[]] = await connection.execute(
-        `SELECT * FROM quizzes WHERE user_id = 31 ORDER BY created_at DESC`
-      );
-
-      // Extract the rows from the query result
-      const quizzes: Quiz[] = queryResult as Quiz[];
-
-      // Return the quizzes as a JSON response
-      return NextResponse.json(quizzes, { status: 200 });
-    } catch (error) {
-      console.error('Error fetching user quizzes:', error);
-      return NextResponse.json(
-        { error: 'Failed to fetch user quizzes' },
-        { status: 500 }
-      );
-    } finally {
-      await connection.end();
-    }
+    return NextResponse.json(quizzes, { status: 200 });
   } catch (error) {
-    console.error('Unexpected error:', error);
+    console.error('Error fetching user quizzes:', error);
     return NextResponse.json(
-      { error: 'Internal Server Error' },
+      { error: 'Failed to fetch user quizzes' },
       { status: 500 }
     );
   }

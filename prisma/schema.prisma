@@ -1,0 +1,79 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+
+model User {
+  id          Int       @id @default(autoincrement())
+  username    String    @unique
+  email       String    @unique
+  passwordHash String
+  createdAt   DateTime  @default(now())
+  quizzes     Quiz[]
+  attempts    QuizAttempt[]
+}
+
+model Quiz {
+  id        Int       @id @default(autoincrement())
+  userId    Int
+  prompt    String
+  title     String    @default("Generated Quiz")
+  createdAt DateTime  @default(now())
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  questions Question[]
+  attempts  QuizAttempt[]
+}
+
+model Question {
+  id            Int       @id @default(autoincrement())
+  quizId        Int
+  questionText  String
+  questionType  String    // ENUM equivalent for 'mcq', 'open-ended'
+  correctOption Int?
+  explanation   String?
+  createdAt     DateTime  @default(now())
+  quiz          Quiz      @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  options       Option[]
+  answers       UserAnswer[]
+}
+
+model Option {
+  id          Int       @id @default(autoincrement())
+  questionId  Int
+  optionText  String
+  optionIndex Int
+  question    Question  @relation(fields: [questionId], references: [id], onDelete: Cascade)
+}
+
+model QuizAttempt {
+  id          Int       @id @default(autoincrement())
+  quizId      Int
+  userId      Int
+  score       Float?
+  passed      Boolean
+  attemptDate DateTime  @default(now())
+  quiz        Quiz      @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  answers     UserAnswer[]
+}
+
+model UserAnswer {
+  id           Int       @id @default(autoincrement())
+  attemptId    Int
+  questionId   Int
+  userResponse String
+  isCorrect    Boolean
+  attempt      QuizAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  question     Question  @relation(fields: [questionId], references: [id], onDelete: Cascade)
+}

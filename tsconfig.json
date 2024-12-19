@@ -18,6 +18,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "incremental": true,
+    "typeRoots": ["./node_modules/@types"],
     "paths": {
       "@/*": [
         "./src/*"
@@ -39,7 +40,8 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    ".next/types/**/*.ts"
+    ".next/types/**/*.ts",
+    "src", "lib", "global.d.ts"
   ],
   "exclude": [
     "node_modules"
