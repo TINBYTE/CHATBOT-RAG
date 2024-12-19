@@ -160,30 +160,50 @@ const QuizPage: React.FC = () => {
   };
 
   const saveQuizResults = async () => {
-      try {
-          const user = JSON.parse(localStorage.getItem('usertoken') || '{}');
-
-          const response = await fetch('/api/quiz/submit', {
-              method: 'POST',
-              headers: {
-                  'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                  quizId,
-                  userId: user.id,
-                  score: (score / quizData.questions.length) * 100,
-                  passed: score >= quizData.questions.length / 2,
-                  userAnswers,
-              }),
-          });
-
-          if (!response.ok) {
-              throw new Error('Failed to save quiz results');
-          }
-      } catch (error) {
-          console.error('Error saving quiz results:', error);
+    try {
+      const user = JSON.parse(localStorage.getItem('usertoken') || '{}');
+  
+      const response = await fetch('/api/quiz/save', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          quizData: {
+            title: quizData.title,
+            prompt,
+            questions: quizData.questions.map((question) => ({
+              questionText: question.questionText,
+              questionType: question.questionType,
+              correctOption: question.correctOption,
+              explanation: question.explanation,
+              options: question.options.map((option) => ({
+                id: option.id,
+                optionText: option.optionText,
+              })),
+            })),
+          },
+          userId: user.id,
+          score: (score / quizData.questions.length) * 100,
+          passed: score >= quizData.questions.length / 2,
+          userAnswers: userAnswers.map((answer) => ({
+            questionId: answer.questionId,
+            userResponse: answer.userResponse,
+            isCorrect: answer.isCorrect,
+          })),
+        }),
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to save quiz results');
       }
+  
+      console.log('Quiz and results saved successfully');
+    } catch (error) {
+      console.error('Error saving quiz results:', error);
+    }
   };
+  
 
   return (
     <Box p={4}>

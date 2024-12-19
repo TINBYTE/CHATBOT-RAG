@@ -27,30 +27,19 @@ const routes: IRoute[] = [
     collapse: false,
   },
   {
-    name: 'Quiz',
-    disabled: true,
-    invisible: true,
-    path: '/quiz',
+    name: 'History',
+    path: '/history',
     icon: (
-      <Icon as={MdAutoAwesome} width="20px" height="20px" color="inherit" />
+      <Icon as={LuHistory} width="20px" height="20px" color="inherit" />
     ),
     collapse: false,
   },
-  
   {
-    name: 'History',
-    disabled: false,
-    path: '/history',
-    icon: <Icon as={LuHistory} width="20px" height="20px" color="inherit" />,
-    invisible: false,
-    collapse: true,
-  },
-  {
-    name: 'FAQs Content',
-    disabled: true,
-    path: '/faq',
-    icon: <Icon as={IoMdPerson} width="20px" height="20px" color="inherit" />,
-    invisible: true,
+    name: 'New Quiz',
+    path: '/chat',
+    icon: (
+      <Icon as={MdAutoAwesome} width="20px" height="20px" color="inherit" />
+    ),
     collapse: false,
   },
   {
@@ -64,9 +53,28 @@ const routes: IRoute[] = [
         color="inherit"
       />
     ),
-    invisible: false,
+  },
+  {
+    name: 'Quiz',
+    disabled: true,
+    invisible: true,
+    path: '/quiz',
+    icon: (
+      <Icon as={MdAutoAwesome} width="20px" height="20px" color="inherit" />
+    ),
     collapse: false,
   },
+  
+  
+  {
+    name: 'FAQs Content',
+    disabled: true,
+    path: '/faq',
+    icon: <Icon as={IoMdPerson} width="20px" height="20px" color="inherit" />,
+    invisible: true,
+    collapse: false,
+  },
+  
 ];
 
 export default routes;
