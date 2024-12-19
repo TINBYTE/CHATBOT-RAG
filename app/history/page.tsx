@@ -6,19 +6,21 @@ import { Quiz } from '@/app/types/db';
 import {
   Box,
   Button,
-  Grid,
-  GridItem,
   Heading,
+  HStack,
   Text,
   VStack,
   useToast,
+  Divider,
 } from '@chakra-ui/react';
+import { useRouter } from 'next/navigation';
 
 const QuizHistoryPage = () => {
   const [quizzes, setQuizzes] = useState<Quiz[]>([]);
   const [error, setError] = useState<string | null>(null);
   const { user } = useUser(); // Assuming user object is provided by UserContext
   const toast = useToast();
+  const router = useRouter();
 
   // Fetch quizzes from the server
   useEffect(() => {
@@ -48,7 +50,6 @@ const QuizHistoryPage = () => {
 
   // Delete a quiz by its ID
   const handleDeleteQuiz = async (quizId: string) => {
-    console.log('Deleting quiz:', quizId);
     try {
       const response = await fetch(`/api/quiz/deleteQuiz`, {
         method: 'DELETE',
@@ -78,43 +79,59 @@ const QuizHistoryPage = () => {
     }
   };
 
+  // Redirect to quiz details
+  const handleViewDetails = (quizId: string) => {
+    router.push(`/history/details?quizId=${quizId}`);
+  };
+
   return (
-    <VStack align="start" spacing={4} p={4}>
+    <VStack align="start" spacing={6} p={6}>
       <Heading as="h2" size="lg">
-        Your Quizzes
+        Your Quiz History
       </Heading>
       {error ? (
         <Text color="red.500">{error}</Text>
       ) : (
-        <Grid templateColumns="repeat(auto-fit, minmax(300px, 1fr))" gap={6} w="100%">
+        <VStack spacing={4} w="100%">
           {quizzes.map((quiz) => (
-            <GridItem key={quiz.id}>
-              <Box
-                borderWidth="1px"
-                borderRadius="lg"
-                p={4}
-                shadow="md"
-                _hover={{ shadow: 'lg' }}
-              >
-                <Heading as="h3" size="md" mb={2}>
+            <Box
+              key={quiz.id}
+              borderWidth="1px"
+              borderRadius="lg"
+              p={4}
+              w="100%"
+              shadow="md"
+              _hover={{ shadow: 'lg' }}
+            >
+              <HStack justify="space-between" align="center">
+                <Heading as="h3" size="md">
                   {quiz.title}
                 </Heading>
-                <Text>Prompt: {quiz.prompt}</Text>
                 <Text fontSize="sm" color="gray.600">
-                  Created on: {new Date(quiz.created_at).toLocaleString()}
+                  {new Date(quiz.createdAt).toLocaleDateString()} {new Date(quiz.createdAt).toLocaleTimeString()}
                 </Text>
+              </HStack>
+              <Text mt={2}>Prompt: {quiz.prompt}</Text>
+              <Divider my={4} />
+              <HStack spacing={4} justify="flex-end">
+                <Button
+                  colorScheme="blue"
+                  onClick={() => handleViewDetails(quiz.id.toString())}
+                  size="sm"
+                >
+                  Details
+                </Button>
                 <Button
                   colorScheme="red"
-                  mt={4}
                   onClick={() => handleDeleteQuiz(quiz.id.toString())}
                   size="sm"
                 >
                   Delete
                 </Button>
-              </Box>
-            </GridItem>
+              </HStack>
+            </Box>
           ))}
-        </Grid>
+        </VStack>
       )}
     </VStack>
   );

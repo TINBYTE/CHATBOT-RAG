@@ -19,15 +19,8 @@ import RootHead from './head';
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  const [apiKey, setApiKey] = useState('');
   const { isOpen, onOpen, onClose } = useDisclosure();
-  useEffect(() => {
-    const initialKey = localStorage.getItem('apiKey');
-    console.log(initialKey);
-    if (initialKey?.includes('sk-') && apiKey !== initialKey) {
-      setApiKey(initialKey);
-    }
-  }, [apiKey]);
+  
 
   return (
     <html lang="en">
@@ -62,9 +55,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                 <Portal>
                   <Box>
                     <Navbar
-                      setApiKey={setApiKey}
                       onOpen={onOpen}
-                      logoText={'Horizon UI Dashboard PRO'}
+                      logoText={'ASK BASE'}
                       brandText={getActiveRoute(routes, pathname)}
                       secondary={getActiveNavbar(routes, pathname)}
                     />
@@ -78,7 +70,6 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                   pt="50px"
                 >
                   {children}
-                  {/* <Component apiKeyApp={apiKey} {...pageProps} /> */}
                 </Box>
                 <Box>
                   <Footer />

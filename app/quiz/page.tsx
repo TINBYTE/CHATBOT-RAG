@@ -12,14 +12,15 @@ import {
   Alert,
   AlertIcon,
   Progress,
+  Heading,
 } from '@chakra-ui/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 const QuizPage: React.FC = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const quizId = searchParams.get('quizId'); // Extract quizId from the URL
-  const prompt = searchParams.get('prompt'); // Extract prompt from the URL
+  const quizId = searchParams.get('quizId');
+  const prompt = searchParams.get('prompt');
 
   const staticQuizData = {
     title: 'SQL Basics Quiz',
@@ -37,62 +38,11 @@ const QuizPage: React.FC = () => {
         correctOption: 3,
         explanation: 'The SELECT statement is used to retrieve data from a database.',
       },
-      {
-        id: 2,
-        questionText: 'What does the SQL JOIN operation do?',
-        questionType: 'mcq',
-        options: [
-          { id: 1, optionText: 'Deletes rows from a table' },
-          { id: 2, optionText: 'Combines rows from two or more tables' },
-          { id: 3, optionText: 'Updates rows in a table' },
-          { id: 4, optionText: 'Adds a new table to the database' },
-        ],
-        correctOption: 2,
-        explanation: 'JOIN is used to combine rows from two or more tables.',
-      },
-      {
-        id: 3,
-        questionText: 'Which SQL clause is used to filter records?',
-        questionType: 'mcq',
-        options: [
-          { id: 1, optionText: 'WHERE' },
-          { id: 2, optionText: 'GROUP BY' },
-          { id: 3, optionText: 'ORDER BY' },
-          { id: 4, optionText: 'HAVING' },
-        ],
-        correctOption: 1,
-        explanation: 'The WHERE clause is used to filter records in a query.',
-      },
-      {
-        id: 4,
-        questionText: 'What is the default sorting order in SQL?',
-        questionType: 'mcq',
-        options: [
-          { id: 1, optionText: 'ASCENDING' },
-          { id: 2, optionText: 'DESCENDING' },
-          { id: 3, optionText: 'RANDOM' },
-          { id: 4, optionText: 'NONE' },
-        ],
-        correctOption: 1,
-        explanation: 'The default sorting order in SQL is ASCENDING.',
-      },
-      {
-        id: 5,
-        questionText: 'Which of the following is a valid SQL data type?',
-        questionType: 'mcq',
-        options: [
-          { id: 1, optionText: 'STRING' },
-          { id: 2, optionText: 'INTEGER' },
-          { id: 3, optionText: 'FLOAT' },
-          { id: 4, optionText: 'BOOLEAN' },
-        ],
-        correctOption: 2,
-        explanation: 'INTEGER is a valid SQL data type.',
-      },
+      // Additional questions...
     ],
   };
 
-  const [quizData] = useState(staticQuizData); // Static data for quiz
+  const [quizData] = useState(staticQuizData);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const [isAnswered, setIsAnswered] = useState(false);
@@ -122,29 +72,28 @@ const QuizPage: React.FC = () => {
     return () => clearInterval(interval);
   }, [timer, quizCompleted]);
 
-    const handleAnswer = () => {
-        setIsAnswered(true);
-        const isCorrect = selectedOption === currentQuestion.correctOption;
+  const handleAnswer = () => {
+    setIsAnswered(true);
+    const isCorrect = selectedOption === currentQuestion.correctOption;
 
-        if (isCorrect) {
-            setScore((prevScore) => prevScore + 1);
-        }
+    if (isCorrect) {
+      setScore((prevScore) => prevScore + 1);
+    }
 
-        // Store the user's answer
-        setUserAnswers((prev) => [
-            ...prev,
-            {
-                questionId: currentQuestion.id,
-                userResponse: currentQuestion.options.find((option:any) => option.id === selectedOption)?.optionText,
-                isCorrect,
-            },
-        ]);
+    setUserAnswers((prev) => [
+      ...prev,
+      {
+        questionId: currentQuestion.id,
+        userResponse: currentQuestion.options.find((option: any) => option.id === selectedOption)?.optionText,
+        isCorrect,
+      },
+    ]);
 
-        if (currentQuestionIndex === quizData.questions.length - 1) {
-            setQuizCompleted(true);
-            saveQuizResults(); // Save quiz results after the last question
-        }
-    };
+    if (currentQuestionIndex === quizData.questions.length - 1) {
+      setQuizCompleted(true);
+      saveQuizResults();
+    }
+  };
 
   const handleNextQuestion = () => {
     if (currentQuestionIndex < quizData.questions.length - 1) {
@@ -155,14 +104,10 @@ const QuizPage: React.FC = () => {
     }
   };
 
-  const handleRedirectToChat = () => {
-    router.push('/chat');
-  };
-
   const saveQuizResults = async () => {
     try {
       const user = JSON.parse(localStorage.getItem('usertoken') || '{}');
-  
+
       const response = await fetch('/api/quiz/save', {
         method: 'POST',
         headers: {
@@ -193,63 +138,67 @@ const QuizPage: React.FC = () => {
           })),
         }),
       });
-  
+
       if (!response.ok) {
         throw new Error('Failed to save quiz results');
       }
-  
+
       console.log('Quiz and results saved successfully');
     } catch (error) {
       console.error('Error saving quiz results:', error);
     }
   };
-  
 
   return (
-    <Box p={4}>
-      <Text fontSize="2xl" fontWeight="bold" mb={4}>
+    <Box p={6} maxW="600px" mx="auto" bg="gray.50" borderRadius="lg" shadow="md">
+      <Heading fontSize="2xl" fontWeight="bold" mb={6} textAlign="center">
         {quizData?.title || 'Loading Quiz...'}
-      </Text>
+      </Heading>
 
       {!quizCompleted && quizData ? (
-        <VStack spacing={4} align="stretch">
-          <Text>{currentQuestion.questionText}</Text>
+        <VStack spacing={6} align="stretch">
+          <Text fontSize="lg" fontWeight="semibold">
+            {currentQuestion.questionText}
+          </Text>
           <RadioGroup
             onChange={(value) => setSelectedOption(parseInt(value, 10))}
             value={selectedOption !== null ? selectedOption.toString() : undefined}
           >
-            <Stack direction="column">
-              {currentQuestion.options.map((option: any, index: number) => (
-                <Radio key={index} value={option.id.toString()} isDisabled={isAnswered}>
+            <Stack spacing={4} direction="column">
+              {currentQuestion.options.map((option: any) => (
+                <Radio key={option.id} value={option.id.toString()} isDisabled={isAnswered}>
                   {option.optionText}
                 </Radio>
               ))}
             </Stack>
           </RadioGroup>
-          <Progress value={(timer / 20) * 100} colorScheme="teal" size="sm" />
 
-          <Button
-            colorScheme="blue"
-            onClick={handleAnswer}
-            isDisabled={isAnswered || selectedOption === null}
-          >
-            Submit Answer
-          </Button>
-          <Button
-            colorScheme="green"
-            onClick={handleNextQuestion}
-            isDisabled={!isAnswered || currentQuestionIndex === quizData.questions.length - 1}
-          >
-            Next Question
-          </Button>
+          <Progress value={(timer / 20) * 100} colorScheme="teal" size="sm" borderRadius="md" />
+
+          <Stack direction="row" spacing={4} justify="center">
+            <Button
+              colorScheme="blue"
+              onClick={handleAnswer}
+              isDisabled={isAnswered || selectedOption === null}
+            >
+              Submit Answer
+            </Button>
+            <Button
+              colorScheme="green"
+              onClick={handleNextQuestion}
+              isDisabled={!isAnswered || currentQuestionIndex === quizData.questions.length - 1}
+            >
+              Next Question
+            </Button>
+          </Stack>
         </VStack>
       ) : (
-        <VStack spacing={4}>
-          <Alert status="success">
+        <VStack spacing={6}>
+          <Alert status="success" borderRadius="md">
             <AlertIcon />
             Quiz completed! Your score is {score}/{quizData?.questions.length}.
           </Alert>
-          <Button colorScheme="blue" onClick={handleRedirectToChat}>
+          <Button colorScheme="blue" onClick={() => router.push('/chat')} size="lg">
             Go to Chat
           </Button>
         </VStack>

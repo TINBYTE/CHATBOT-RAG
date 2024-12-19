@@ -20,12 +20,12 @@ export default function HeroSection() {
   const { isOpen, onToggle } = useDisclosure();
   const [user, setUser] = useState(null);
 
-  /*useEffect(() => {
+  useEffect(() => {
     const storedUser = localStorage.getItem("usertoken");
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
-  }, []);*/
+  }, []);
 
   // Chakra color mode
   const textColor = useColorModeValue('navy.700', 'white');
@@ -48,7 +48,17 @@ export default function HeroSection() {
         shadow="md"
         borderRadius={'5%'}
       >
-        <Image src="/favicon.ico" h={9} alt="Logo" />
+        <Flex align="center" justify="center" py={1}>
+        <Image
+          src="favicon.svg" // Replace with your logo path in the public folder
+          alt="ASK BASE LOGO"
+          boxSize="30px" // Equivalent to w-14 h-14
+          mr={3}
+        />
+        <Text fontSize="2xl" fontWeight="bold">
+          ASK<Box as="span" color="#F9C650">.Base</Box>
+        </Text>
+      </Flex>
         <Flex
           display={{ base: "none", md: "flex" }}
           align="center"
@@ -174,7 +184,7 @@ export default function HeroSection() {
             align="center"
             mb={4}
           >
-            <Image src="/favicon.ico" h={10} alt="logo" />
+            <Image src="favicon.svg" h={10} alt="logo" />
             <Text ml={2} mt={4} fontSize="md" fontWeight="bold" color={textColor}>
               Ultimate Quiz Generator
             </Text>

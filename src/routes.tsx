@@ -35,25 +35,14 @@ const routes: IRoute[] = [
     collapse: false,
   },
   {
-    name: 'New Quiz',
-    path: '/chat',
-    icon: (
-      <Icon as={MdAutoAwesome} width="20px" height="20px" color="inherit" />
-    ),
-    collapse: false,
-  },
-  {
     name: 'Profile Settings',
     path: '/settings',
     icon: (
-      <Icon
-        as={MdOutlineManageAccounts}
-        width="20px"
-        height="20px"
-        color="inherit"
-      />
+      <Icon as={MdOutlineManageAccounts} width="20px" height="20px" color="inherit" />
     ),
+    collapse: false,
   },
+  
   {
     name: 'Quiz',
     disabled: true,

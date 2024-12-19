@@ -92,7 +92,7 @@ export default function AuthNavbar(props: {
         alignItems="center"
         justify="center"
       >
-        <Image src="/favicon.ico" h="26px" w="26px" alt="Logo" />
+        <Image src="favicon.svg" h="26px" w="26px" alt="Logo" />
       </Stack>
       <Text fontSize="sm" mt="3px">
         {logoText}
@@ -111,7 +111,7 @@ export default function AuthNavbar(props: {
         alignItems="center"
         color={mainText}
       >
-        <Image src="/favicon.ico" h="26px" w="26px" alt="Logo" />
+        <Image src="favicon.svg" h="26px" w="26px" alt="Logo" />
       </Link>
     );
   }

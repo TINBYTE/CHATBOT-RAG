@@ -4,50 +4,64 @@ export interface User {
     id: number;
     username: string;
     email: string;
-    password_hash: string;
-    created_at: Date;
+    passwordHash: string;
+    createdAt: Date;
+    quizzes: Quiz[];
+    attempts: QuizAttempt[];
 }
 
 export interface Quiz {
     id: number;
-    user_id: number;
+    userId: number;
     prompt: string;
     title: string;
-    created_at: Date;
+    createdAt: Date;
+    user: User;
+    questions: Question[];
+    attempts: QuizAttempt[];
 }
 
 export type QuestionType = 'mcq' | 'open-ended';
 
 export interface Question {
     id: number;
-    quiz_id: number;
-    question_text: string;
-    question_type: QuestionType;
-    correct_option: number | null;
+    quizId: number;
+    questionText: string;
+    questionType: QuestionType;
+    correctOption: number | null;
     explanation: string | null;
-    created_at: Date;
+    createdAt: Date;
+    quiz: Quiz;
+    options: Option[];
+    answers: UserAnswer[];
 }
 
- export interface Option {
-   id: number;
-   question_id: number;
-   option_text: string;
-   option_index: number;
- }
+export interface Option {
+    id: number;
+    questionId: number;
+    optionText: string;
+    optionIndex: number;
+    question: Question;
+}
 
 export interface QuizAttempt {
     id: number;
-    quiz_id: number;
-    user_id: number;
-    score: number;
+    quizId: number;
+    userId: number;
+    score: number | null;
     passed: boolean;
-    attempt_date: Date;
+    attemptDate: Date;
+    quiz: Quiz;
+    user: User;
+    answers: UserAnswer[];
 }
 
 export interface UserAnswer {
     id: number;
-    attempt_id: number;
-    question_id: number;
-    user_response: string;
-    is_correct: boolean;
+    attemptId: number;
+    questionId: number;
+    userResponse: string;
+    isCorrect: boolean;
+    attempt: QuizAttempt;
+    question: Question;
 }
