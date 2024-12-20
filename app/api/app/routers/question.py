@@ -19,7 +19,7 @@ vectorstore_path = os.path.join(base_dir, "vector_database")
 faiss_index = load_faiss_index(vectorstore_path)
 ollama_model = OllamaLLM(model="llama3.2")
 
-@router.post("/generate-exam", response_model=QuestionResponse)
+@router.post("generate-exam", response_model=QuestionResponse)
 async def generate_exam(request: QuestionRequest):
     try:
         exam = exam_pipeline(

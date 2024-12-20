@@ -1,6 +1,5 @@
 from fastapi import FastAPI
 from app.routers import question
-from app.routers import auth
 
 from fastapi.middleware.cors import CORSMiddleware
 
