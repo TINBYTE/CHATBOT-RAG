@@ -1,0 +1,11 @@
+fastapi 
+uvicorn 
+pydantic[dotenv] 
+transformers 
+langchain 
+llama_index 
+torch
+langchain_ollamas
+langchain_huggingface
+langchain-community
+faiss-cpu

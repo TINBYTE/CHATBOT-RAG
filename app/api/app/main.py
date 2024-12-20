@@ -17,4 +17,3 @@ app.add_middleware(
 
 # Include routers
 app.include_router(question.router, prefix="/Exam", tags=["Questions"])
-app.include_router(auth.router, prefix="/auth", tags=["auth"])
