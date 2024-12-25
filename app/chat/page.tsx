@@ -1,12 +1,13 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Box, Heading, VStack } from '@chakra-ui/react';
+import { Box, Heading, VStack, useColorModeValue } from '@chakra-ui/react';
 import ExamForm from '@/components/exam/ExamForm';
 import ExamDisplay from '@/components/exam/ExamDisplay';
 import ExamFeedback from '@/components/exam/ExamFeedBack';
 
 const ChatPage: React.FC = () => {
+    const textColor = useColorModeValue('navy.700', 'white');
   const [examData, setExamData] = useState<any | null>(null);
   const [userResponses, setUserResponses] = useState<
     { questionId: number; userResponse: string; isCorrect: boolean }[]
@@ -14,7 +15,8 @@ const ChatPage: React.FC = () => {
   const [quizCompleted, setQuizCompleted] = useState(false);
   const [score, setScore] = useState(0);
 
-  const userId = 1; // Replace with actual user ID from authentication context
+  const userToken = localStorage.getItem('usertoken');
+  const userId = userToken ? JSON.parse(userToken).id : null;
 
   const handleGenerateExam = async (formData: {
     query: string;
@@ -34,7 +36,7 @@ const ChatPage: React.FC = () => {
       }
 
       const data = await response.json();
-      setExamData(data);
+       setExamData({ ...data, prompt: formData.query, title: "Exam : " +formData.query });
       setQuizCompleted(false);
       setUserResponses([]);
       setScore(0);
@@ -59,8 +61,14 @@ const ChatPage: React.FC = () => {
 
   return (
     <Box p={4}>
-      <Heading as="h1" size="lg" mb={6} textAlign="center">
-        {!examData ? 'QUIZ GENERATOR' : `QUIZ: ${examData.prompt}`}
+        <Heading
+        as="h1"
+        size="lg"
+        mb={6}
+        textAlign="center"
+        color={textColor}
+      >
+        {!examData ? 'QUIZ GENERATOR' : `QUIZ: ${examData?.prompt || ""}`}
       </Heading>
       <VStack spacing={6}>
         {!examData ? (

@@ -23,6 +23,7 @@ export async function POST(req: Request) {
             questionText: q.question_data.question,
             questionType: q.type,
             correctOption: Object.keys(q.question_data.options).indexOf(q.question_data.correct_answer) + 1,
+            explanation: q.question_data.explanation || null,
             options: {
               create: Object.entries(q.question_data.options).map(([key, value], index) => ({
                 optionText: value,

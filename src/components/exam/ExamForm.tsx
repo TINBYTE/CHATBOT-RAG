@@ -47,11 +47,16 @@ const ExamForm: React.FC<ExamFormProps> = ({ onSubmit }) => {
         <FormControl>
           <FormLabel>Prompt</FormLabel>
           <Input
+            isRequired={true}
+            variant="auth"
+            fontSize="sm"
+            ms={{ base: '0px', md: '4px' }}
+            placeholder="Enter your SQL query"
+            size="lg"
+            type='text'
             name="query"
             value={formData.query}
             onChange={handleChange}
-            placeholder="Enter your SQL query"
-            required
           />
         </FormControl>
 
@@ -59,7 +64,7 @@ const ExamForm: React.FC<ExamFormProps> = ({ onSubmit }) => {
           <FormLabel>Number of Questions</FormLabel>
           <NumberInput
             min={1}
-            max={50}
+            max={10}
             value={formData.question_nbr}
             onChange={handleNumberChange}
           >

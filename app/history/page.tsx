@@ -13,12 +13,13 @@ import {
   useToast,
   Divider,
   Flex,
-  Center,
+  Spinner,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/navigation';
 
 const QuizHistoryPage = () => {
   const [quizzes, setQuizzes] = useState<Quiz[]>([]);
+  const [loading, setLoading] = useState(true); // Loading state
   const [error, setError] = useState<string | null>(null);
   const { user } = useUser();
   const toast = useToast();
@@ -41,6 +42,8 @@ const QuizHistoryPage = () => {
         setQuizzes(data);
       } catch (err: any) {
         setError(err.message || 'An error occurred');
+      } finally {
+        setLoading(false); // Set loading to false when fetching is done
       }
     };
 
@@ -90,15 +93,21 @@ const QuizHistoryPage = () => {
       <Heading as="h2" size="lg">
         Your Quiz History
       </Heading>
-      {error ? (
+      {loading ? (
+        <Flex w="100%" h="200px" align="center" justify="center">
+          <VStack spacing={4}>
+            <Spinner size="lg" />
+            <Text>Loading history...</Text>
+          </VStack>
+        </Flex>
+      ) : error ? (
         <Text color="red.500">{error}</Text>
       ) : quizzes.length === 0 ? (
-          <Flex w="100%" h="200px" align="center" justify="center">
-              <Text fontSize="xl" color="gray.500">
-                  No quiz history yet.
-              </Text>
-            </Flex>
-
+        <Flex w="100%" h="200px" align="center" justify="center">
+          <Text fontSize="xl" color="gray.500">
+            No quiz history yet.
+          </Text>
+        </Flex>
       ) : (
         <VStack spacing={4} w="100%">
           {quizzes.map((quiz) => (

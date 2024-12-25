@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { VStack, Button, Text } from '@chakra-ui/react';
+import { VStack, Button } from '@chakra-ui/react';
 import QuestionCard from './QuestionCard';
 
 interface ExamDisplayProps {
@@ -12,27 +12,36 @@ const ExamDisplay: React.FC<ExamDisplayProps> = ({ examData, onComplete }) => {
   const [userResponses, setUserResponses] = useState<
     { questionId: number; userResponse: string; isCorrect: boolean }[]
   >([]);
-  const [selectedOption, setSelectedOption] = useState<string | null>(null);
+    const [selectedOptionIndex, setSelectedOptionIndex] = useState<number | null>(null);
 
   const currentQuestion = examData.questions[currentQuestionIndex];
 
   const handleNextQuestion = () => {
-    const isCorrect = selectedOption === currentQuestion.question_data.correct_answer;
+    let selectedOption = null
+        if(selectedOptionIndex) {
+        selectedOption=  selectedOptionIndex
+        }
+   const correctOptionIndex = Object.keys(currentQuestion.question_data.options).indexOf(currentQuestion.question_data.correct_answer) + 1
+    const isCorrect = selectedOption === correctOptionIndex;
 
-    setUserResponses((prev) => [
-      ...prev,
+
+    // Add the current question response
+    const updatedResponses = [
+      ...userResponses,
       {
         questionId: currentQuestionIndex + 1,
-        userResponse: selectedOption || '',
+        userResponse: String(selectedOption),
         isCorrect,
       },
-    ]);
+    ];
 
-    if (currentQuestionIndex < examData.questions.length - 1) {
-      setSelectedOption(null);
-      setCurrentQuestionIndex((prev) => prev + 1);
+    // Check if it's the last question
+    if (currentQuestionIndex === examData.questions.length - 1) {
+      onComplete(updatedResponses); // Pass all responses, including the last one
     } else {
-      onComplete(userResponses);
+      setUserResponses(updatedResponses); // Update userResponses for intermediate questions
+      setSelectedOptionIndex(null); // Reset selected option
+      setCurrentQuestionIndex((prev) => prev + 1); // Move to the next question
     }
   };
 
@@ -40,13 +49,13 @@ const ExamDisplay: React.FC<ExamDisplayProps> = ({ examData, onComplete }) => {
     <VStack spacing={4}>
       <QuestionCard
         question={currentQuestion}
-        selectedOption={selectedOption}
-        onSelectOption={setSelectedOption}
+        selectedOption={selectedOptionIndex}
+        onSelectOption={(index)=>setSelectedOptionIndex(index)}
       />
       <Button
         colorScheme="green"
         onClick={handleNextQuestion}
-        isDisabled={!selectedOption}
+        isDisabled={!selectedOptionIndex}
       >
         {currentQuestionIndex === examData.questions.length - 1 ? 'Finish' : 'Next'}
       </Button>
