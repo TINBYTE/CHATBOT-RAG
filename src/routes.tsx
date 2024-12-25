@@ -1,20 +1,13 @@
 import { Icon } from '@/lib/chakra';
 import {
-  MdFileCopy,
-  MdHome,
-  MdLock,
-  MdLayers,
   MdAutoAwesome,
   MdOutlineManageAccounts,
 } from 'react-icons/md';
 import { IoMdPerson } from 'react-icons/io';
 import { LuHistory } from 'react-icons/lu';
-import { RoundedChart } from '@/components/icons/Icons';
 
 // Auth Imports
 import { IRoute } from './types/navigation';
-
-import { Quiz } from '@/app/types/db';
 
 
 const routes: IRoute[] = [

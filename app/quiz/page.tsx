@@ -14,67 +14,64 @@ import {
   Progress,
   Heading,
 } from '@chakra-ui/react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
 const QuizPage: React.FC = () => {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const quizId = searchParams.get('quizId');
-  const prompt = searchParams.get('prompt');
-
-  const staticQuizData = {
-    title: 'SQL Basics Quiz',
-    questions: [
-      {
-        id: 1,
-        questionText: 'Which SQL keyword is used to retrieve data from a database?',
-        questionType: 'mcq',
-        options: [
-          { id: 1, optionText: 'INSERT' },
-          { id: 2, optionText: 'DELETE' },
-          { id: 3, optionText: 'SELECT' },
-          { id: 4, optionText: 'UPDATE' },
-        ],
-        correctOption: 3,
-        explanation: 'The SELECT statement is used to retrieve data from a database.',
-      },
-      // Additional questions...
-    ],
-  };
-
-  const [quizData] = useState(staticQuizData);
+  const [quizData, setQuizData] = useState<any | null>(null);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [selectedOption, setSelectedOption] = useState<number | null>(null);
+  const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [isAnswered, setIsAnswered] = useState(false);
-  const [timer, setTimer] = useState(20);
   const [quizCompleted, setQuizCompleted] = useState(false);
   const [score, setScore] = useState(0);
   const [userAnswers, setUserAnswers] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
+  const quizConfig = JSON.parse(localStorage.getItem('quizConfig') || '{}');
   const currentQuestion = quizData?.questions[currentQuestionIndex];
+  const API_BASE_URL = 'http://localhost:8000/Exam/newexam';
 
+  // Fetch quiz data from API
   useEffect(() => {
-    const usertoken = localStorage.getItem('usertoken');
-    if (!usertoken) {
-      router.push('/auth/login');
+    if (Object.keys(quizConfig).length === 0) {
+      router.push('/chat');
+      return;
     }
-  }, [router]);
 
-  useEffect(() => {
-    if (quizCompleted) return;
+    const fetchQuizData = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch('http://localhost:8000/Exam/newexam', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            query: quizConfig.query || '',
+            question_nbr: quizConfig.question_nbr || 0,
+            difficulty: quizConfig.difficulty || '',
+            question_type: quizConfig.question_type || '',
+          }),
+        });
 
-    if (timer === 0) {
-      handleNextQuestion();
-    }
-    const interval = setInterval(() => {
-      setTimer((prev) => (prev > 0 ? prev - 1 : 0));
-    }, 1000);
-    return () => clearInterval(interval);
-  }, [timer, quizCompleted]);
+        if (!response.ok) throw new Error('Failed to fetch quiz data');
+
+        const data = await response.json();
+        setQuizData(data);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'An error occurred');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchQuizData();
+  }, []);
 
   const handleAnswer = () => {
+    if (!currentQuestion) return;
+
     setIsAnswered(true);
-    const isCorrect = selectedOption === currentQuestion.correctOption;
+    const isCorrect = selectedOption === currentQuestion.question_data.correct_answer;
 
     if (isCorrect) {
       setScore((prevScore) => prevScore + 1);
@@ -83,8 +80,8 @@ const QuizPage: React.FC = () => {
     setUserAnswers((prev) => [
       ...prev,
       {
-        questionId: currentQuestion.id,
-        userResponse: currentQuestion.options.find((option: any) => option.id === selectedOption)?.optionText,
+        questionId: currentQuestionIndex + 1,
+        userResponse: selectedOption,
         isCorrect,
       },
     ]);
@@ -95,113 +92,58 @@ const QuizPage: React.FC = () => {
     }
   };
 
-  const handleNextQuestion = () => {
-    if (currentQuestionIndex < quizData.questions.length - 1) {
-      setCurrentQuestionIndex((prev) => prev + 1);
-      setSelectedOption(null);
-      setIsAnswered(false);
-      setTimer(20);
-    }
-  };
-
   const saveQuizResults = async () => {
     try {
       const user = JSON.parse(localStorage.getItem('usertoken') || '{}');
-
       const response = await fetch('/api/quiz/save', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          quizData: {
-            title: quizData.title,
-            prompt,
-            questions: quizData.questions.map((question) => ({
-              questionText: question.questionText,
-              questionType: question.questionType,
-              correctOption: question.correctOption,
-              explanation: question.explanation,
-              options: question.options.map((option) => ({
-                id: option.id,
-                optionText: option.optionText,
-              })),
-            })),
-          },
+          quizData,
           userId: user.id,
           score: (score / quizData.questions.length) * 100,
           passed: score >= quizData.questions.length / 2,
-          userAnswers: userAnswers.map((answer) => ({
-            questionId: answer.questionId,
-            userResponse: answer.userResponse,
-            isCorrect: answer.isCorrect,
-          })),
+          userAnswers,
         }),
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to save quiz results');
-      }
-
+      if (!response.ok) throw new Error('Failed to save quiz results');
       console.log('Quiz and results saved successfully');
-    } catch (error) {
-      console.error('Error saving quiz results:', error);
+    } catch (err) {
+      console.error('Error saving quiz results:', err);
     }
   };
+
+  if (loading) return <Box textAlign="center">Loading quiz...</Box>;
+  if (error) return <Box textAlign="center" color="red.500">{error}</Box>;
 
   return (
     <Box p={6} maxW="600px" mx="auto" bg="gray.50" borderRadius="lg" shadow="md">
       <Heading fontSize="2xl" fontWeight="bold" mb={6} textAlign="center">
-        {quizData?.title || 'Loading Quiz...'}
+        {quizData?.title || 'Quiz'}
       </Heading>
-
-      {!quizCompleted && quizData ? (
+      {!quizCompleted && currentQuestion ? (
         <VStack spacing={6} align="stretch">
-          <Text fontSize="lg" fontWeight="semibold">
-            {currentQuestion.questionText}
-          </Text>
-          <RadioGroup
-            onChange={(value) => setSelectedOption(parseInt(value, 10))}
-            value={selectedOption !== null ? selectedOption.toString() : undefined}
-          >
-            <Stack spacing={4} direction="column">
-              {currentQuestion.options.map((option: any) => (
-                <Radio key={option.id} value={option.id.toString()} isDisabled={isAnswered}>
-                  {option.optionText}
+          <Text fontSize="lg">{currentQuestion.question_data.question}</Text>
+          <RadioGroup onChange={setSelectedOption} value={selectedOption || undefined}>
+            <Stack spacing={4}>
+              {Object.entries(currentQuestion.question_data.options).map(([key, option]) => (
+                <Radio key={key} value={key} isDisabled={isAnswered}>
+                  {option as string}
                 </Radio>
               ))}
             </Stack>
           </RadioGroup>
-
-          <Progress value={(timer / 20) * 100} colorScheme="teal" size="sm" borderRadius="md" />
-
-          <Stack direction="row" spacing={4} justify="center">
-            <Button
-              colorScheme="blue"
-              onClick={handleAnswer}
-              isDisabled={isAnswered || selectedOption === null}
-            >
-              Submit Answer
-            </Button>
-            <Button
-              colorScheme="green"
-              onClick={handleNextQuestion}
-              isDisabled={!isAnswered || currentQuestionIndex === quizData.questions.length - 1}
-            >
-              Next Question
-            </Button>
-          </Stack>
-        </VStack>
-      ) : (
-        <VStack spacing={6}>
-          <Alert status="success" borderRadius="md">
-            <AlertIcon />
-            Quiz completed! Your score is {score}/{quizData?.questions.length}.
-          </Alert>
-          <Button colorScheme="blue" onClick={() => router.push('/chat')} size="lg">
-            Go to Chat
+          <Progress value={(score / quizData.questions.length) * 100} colorScheme="teal" />
+          <Button onClick={handleAnswer} isDisabled={!selectedOption || isAnswered}>
+            Submit Answer
           </Button>
         </VStack>
+      ) : (
+        <Alert status="success">
+          <AlertIcon />
+          Quiz completed! Your score is {score}/{quizData.questions.length}.
+        </Alert>
       )}
     </Box>
   );

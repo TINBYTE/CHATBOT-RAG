@@ -1,58 +1,70 @@
 import { NextResponse } from 'next/server';
-import prisma from '@/lib/prisma'; // Import Prisma client
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
 
 export async function POST(req: Request) {
   try {
     const body = await req.json();
     const { quizData, userId, score, passed, userAnswers } = body;
 
-    if (!quizData || !userId || score === undefined || passed === undefined || !userAnswers) {
+    if (!quizData || !userId || score === undefined || !userAnswers) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
-    // Save the quiz
+    // Create the quiz and its questions
     const quiz = await prisma.quiz.create({
       data: {
-        userId: Number(userId),
-        prompt: quizData.prompt,
-        title: quizData.title,
+        userId: parseInt(userId),
+        title: quizData.title || 'Untitled Quiz',
+        prompt: quizData.prompt || '',
         questions: {
-          create: quizData.questions.map((question: any) => ({
-            questionText: question.questionText,
-            questionType: question.questionType,
-            correctOption: question.correctOption,
-            explanation: question.explanation,
+          create: quizData.questions.map((q: any) => ({
+            questionText: q.question_data.question,
+            questionType: q.type,
+            correctOption: Object.keys(q.question_data.options).indexOf(q.question_data.correct_answer) + 1,
             options: {
-              create: question.options.map((option: any) => ({
-                optionText: option.optionText,
-                optionIndex: option.id,
+              create: Object.entries(q.question_data.options).map(([key, value], index) => ({
+                optionText: value,
+                optionIndex: index + 1, // Numeric index starting at 1
               })),
             },
           })),
         },
       },
+      include: {
+        questions: true, // Include created questions to retrieve their IDs
+      },
     });
 
-    // Save the quiz attempt
+    // Map userAnswers to the correct question IDs
+    const updatedUserAnswers = userAnswers.map((answer: any) => {
+      const question = quiz.questions[answer.questionId - 1]; // Match by index
+      return {
+        questionId: question.id,
+        userResponse: answer.userResponse,
+        isCorrect: answer.isCorrect,
+      };
+    });
+
+    // Create the quiz attempt
     const attempt = await prisma.quizAttempt.create({
       data: {
         quizId: quiz.id,
-        userId: Number(userId),
+        userId: parseInt(userId),
         score,
         passed,
         answers: {
-          create: userAnswers.map((answer: any) => ({
-            questionId: answer.questionId,
-            userResponse: answer.userResponse,
-            isCorrect: answer.isCorrect,
-          })),
+          create: updatedUserAnswers,
         },
       },
     });
 
-    return NextResponse.json({ message: 'Quiz and results saved successfully', quiz, attempt });
+    return NextResponse.json({ message: 'Quiz and results saved successfully', attempt });
   } catch (error) {
-    console.error('Error saving quiz data:', error);
-    return NextResponse.json({ error: 'Failed to save quiz data' }, { status: 500 });
+    console.error('Error saving quiz:', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  } finally {
+    await prisma.$disconnect();
   }
 }

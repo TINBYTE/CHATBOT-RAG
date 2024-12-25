@@ -12,17 +12,18 @@ import {
   VStack,
   useToast,
   Divider,
+  Flex,
+  Center,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/navigation';
 
 const QuizHistoryPage = () => {
   const [quizzes, setQuizzes] = useState<Quiz[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const { user } = useUser(); // Assuming user object is provided by UserContext
+  const { user } = useUser();
   const toast = useToast();
   const router = useRouter();
 
-  // Fetch quizzes from the server
   useEffect(() => {
     const fetchQuizzes = async () => {
       try {
@@ -48,7 +49,6 @@ const QuizHistoryPage = () => {
     }
   }, [user?.id]);
 
-  // Delete a quiz by its ID
   const handleDeleteQuiz = async (quizId: string) => {
     try {
       const response = await fetch(`/api/quiz/deleteQuiz`, {
@@ -61,7 +61,9 @@ const QuizHistoryPage = () => {
         throw new Error('Failed to delete quiz');
       }
 
-      setQuizzes((prevQuizzes) => prevQuizzes.filter((quiz) => quiz.id !== Number(quizId)));
+      setQuizzes((prevQuizzes) =>
+        prevQuizzes.filter((quiz) => quiz.id !== Number(quizId))
+      );
       toast({
         title: 'Quiz deleted.',
         status: 'success',
@@ -79,18 +81,24 @@ const QuizHistoryPage = () => {
     }
   };
 
-  // Redirect to quiz details
   const handleViewDetails = (quizId: string) => {
     router.push(`/history/details?quizId=${quizId}`);
   };
 
   return (
-    <VStack align="start" spacing={6} p={6}>
+    <VStack align="start" spacing={6} p={6} w="100%">
       <Heading as="h2" size="lg">
         Your Quiz History
       </Heading>
       {error ? (
         <Text color="red.500">{error}</Text>
+      ) : quizzes.length === 0 ? (
+          <Flex w="100%" h="200px" align="center" justify="center">
+              <Text fontSize="xl" color="gray.500">
+                  No quiz history yet.
+              </Text>
+            </Flex>
+
       ) : (
         <VStack spacing={4} w="100%">
           {quizzes.map((quiz) => (
