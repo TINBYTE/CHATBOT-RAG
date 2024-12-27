@@ -30,57 +30,105 @@ def generate_questions_parallel(base, query, question_type, question_nbr, ollama
     return questions
 
 
-# Generate QCM questions
-def generate_mcq(content, query, ollama_model, difficulty="intermédiaire"):
+def generate_mcq(content, query, ollama_model, difficulty="intermédiaire"):    
+    # Guide for difficulty levels as a dictionary
+    difficulty_guide = {
+        "débutant": "Questions simples qui testent des connaissances de base. Exemples : définitions, faits élémentaires.",
+        "intermédiaire": "Questions qui nécessitent une compréhension plus approfondie et l'application de concepts. Exemples : analyse de cas, choix entre plusieurs options.",
+        "avancé": "Questions complexes qui demandent une réflexion critique et une synthèse des informations. Exemples : résolution de problèmes, interprétation de données."
+    }
+
+    # Accessing the appropriate guide based on the specified difficulty
+    guide_description = difficulty_guide.get(difficulty, "Niveau de difficulté non reconnu. Veuillez choisir entre 'débutant', 'intermédiaire' ou 'avancé'.")
+
     prompt = f"""
-    Agis comme un système français spécialisé dans la génération de questions à choix multiples (QCM). 
-    Génère une question de niveau {difficulty} en français basée sur le contenu suivant. 
-    
-    La question doit :
-    1. Tester la compréhension d’un concept clé lié à la requête suivante : '{query}'.
-    2. Si la question nécessite un contexte ou du code, inclure ces informations dans la question.
-    3. Être claire et bien structurée, sans références inutiles au contenu source.
-    4. Contenir uniquement :
-        - Une question pertinente
-        - Quatre options de réponse (A, B, C, D), avec une seule réponse correcte
-        - La réponse correcte clairement identifiée
-        - Une explication concise en français, expliquant pourquoi la réponse est correcte.
+    Vous êtes un assistant spécialisé dans la génération de questions à choix multiples (QCM) en français.
+    Utilisez le contenu suivant pour créer une question conforme aux consignes ci-dessous.
 
-    Formate la réponse dans un format JSON comme suit :
+    ### Guide des niveaux de difficulté :
+    {guide_description}
 
-    {{
-        "question": "<la question>",
-        "options": {{
-            "A": "<option A>",
-            "B": "<option B>",
-            "C": "<option C>",
-            "D": "<option D>"
-        }},
-        "correct_answer": "<la réponse correcte>",
-        "explanation": "<explication concise>"
-    }}
+    ### Consignes :
+    1. *Lien avec la requête* :
+       La question doit être directement liée au concept suivant : '{query}' et évaluer la compréhension de ce concept.
 
-    Contenu pour générer la question :
-{content}
+    2. *Niveau de difficulté* :
+       Adaptez la complexité de la question au niveau spécifié : '{difficulty}'. Assurez-vous que la question soit appropriée pour ce niveau.
+
+    3. *Structure des options* :
+       - Créez une question avec quatre options de réponse (A, B, C, D), dont une seule est correcte.
+       - Les options doivent être distinctes, pertinentes et logiquement plausibles.
+
+    4. *Format de sortie* :
+       Retournez la question sous le format JSON suivant :
+       json
+       {{
+           "question": "",
+           "options": {{
+               "A": "",
+               "B": "",
+               "C": "",
+               "D": ""
+           }},
+           "correct_answer": "",
+           "explanation": ""
+       }}
+       
+
+    5. *Précision et clarté* :
+       Toutes les informations doivent être extraites uniquement du contenu fourni. Évitez toute ambiguïté et assurez-vous que la question soit claire et compréhensible.
+
+    ### Contenu à utiliser :
+    {content}
     """
     response = ollama_model.invoke(prompt)
     return response
 
 
-# Generate open-ended questions
 def generate_open_ended(content, query, ollama_model, difficulty="intermédiaire"):
+    # Guide for difficulty levels as a dictionary
+    difficulty_guide = {
+        "débutant": "Questions simples qui invitent à une réflexion de base. Réponses courtes et directes. Accent sur la compréhension élémentaire.",
+        "intermédiaire": "Questions qui encouragent une analyse plus approfondie. Réponses nécessitant une explication structurée et des exemples.",
+        "avancé": "Questions complexes qui stimulent une pensée critique et une analyse approfondie. Réponses détaillées, argumentées et nuancées."
+    }
+
+    # Accessing the appropriate guide based on the specified difficulty
+    guide_description = difficulty_guide.get(difficulty, "Niveau de difficulté non reconnu. Veuillez choisir entre 'débutant', 'intermédiaire' ou 'avancé'.")
 
     prompt = f"""
-    Agis comme un système français spécialisé dans la génération de questions ouvertes. 
-    Génère une question ouverte de niveau {difficulty} en français basée sur le contenu suivant.
-    La question doit se concentrer sur le concept de '{query}' et tester la compréhension de ce concept dans le contexte du contenu.
+    Vous êtes un assistant spécialisé dans la génération de questions ouvertes en français.
+    Utilisez le contenu suivant pour créer une question conforme aux consignes ci-dessous.
 
-    La sortie doit inclure uniquement :
-    1. Une question claire et bien structurée
-    2. Une réponse exemple concise
-    3. Une explication en français de la réponse, sans faire référence au contenu source.
+    ### Guide des niveaux de difficulté :
+    {guide_description}
 
-    Contenu :
+    ### Consignes :
+    1. *Lien avec la requête* :
+       La question doit être directement liée au concept suivant : '{query}' et stimuler une réflexion approfondie.
+
+    2. *Niveau de difficulté* :
+       Adaptez la complexité de la question au niveau spécifié : '{difficulty}'. Assurez-vous que la question soit appropriée pour ce niveau.
+
+    3. *Structure de la question ouverte* :
+       - Formulez une question qui invite à une réponse développée et réfléchie.
+       - La question doit permettre une exploration nuancée du sujet.
+
+    4. *Format de sortie* :
+       Retournez la question sous le format JSON suivant :
+       json
+       {{
+           "question": "",
+           "correct_answer": "",
+           "explanation": ""
+       }}
+       
+
+    5. *Précision et clarté* :
+       Toutes les informations doivent être extraites uniquement du contenu fourni. 
+       Assurez-vous que la question soit claire, stimulante et en adéquation avec le niveau de difficulté.
+
+    ### Contenu à utiliser :
     {content}
     """
     response = ollama_model.invoke(prompt)
