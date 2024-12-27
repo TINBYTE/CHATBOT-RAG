@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import prisma from '@/lib/prisma'; // Import the Prisma client
+import prisma from '@/lib/prisma';
 
 export async function GET(req: Request) {
   try {
@@ -13,13 +13,39 @@ export async function GET(req: Request) {
       );
     }
 
-    // Fetch quizzes for the user using Prisma
+    // Fetch quizzes with attempts and questions
     const quizzes = await prisma.quiz.findMany({
-      where: { userId: Number(userId) },
-      orderBy: { createdAt: 'desc' },
-      include: {
-        questions: true, // Optional: Include related questions
+      where: { 
+        userId: Number(userId) 
       },
+      orderBy: { 
+        createdAt: 'desc' 
+      },
+      include: {
+        questions: true,
+        attempts: {
+          select: {
+            id: true,
+            score: true,
+            passed: true,
+            attemptDate: true,
+            answers: {
+              select: {
+                isCorrect: true,
+                userResponse: true,
+                question: {
+                  select: {
+                    questionText: true,
+                    questionType: true,
+                    correctOption: true,
+                    options: true
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     });
 
     return NextResponse.json(quizzes, { status: 200 });
