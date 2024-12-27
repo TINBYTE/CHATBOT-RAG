@@ -30,18 +30,19 @@ const ChatPage: React.FC = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       });
-
+  
       if (!response.ok) {
         throw new Error('Failed to fetch exam');
       }
-
+  
       const data = await response.json();
-       setExamData({ ...data, prompt: formData.query, title: "Exam : " +formData.query });
+      setExamData({ ...data, prompt: formData.query, title: "Exam : " + formData.query });
       setQuizCompleted(false);
       setUserResponses([]);
       setScore(0);
     } catch (error) {
       console.error('Error generating exam:', error);
+      throw error; // Re-throw the error to be handled by the form
     }
   };
 
@@ -61,15 +62,6 @@ const ChatPage: React.FC = () => {
 
   return (
     <Box p={4}>
-        <Heading
-        as="h1"
-        size="lg"
-        mb={6}
-        textAlign="center"
-        color={textColor}
-      >
-        {!examData ? 'QUIZ GENERATOR' : `QUIZ: ${examData?.prompt || ""}`}
-      </Heading>
       <VStack spacing={6}>
         {!examData ? (
           <ExamForm onSubmit={handleGenerateExam} />
