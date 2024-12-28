@@ -16,6 +16,7 @@ import '@/styles/Plugins.css';
 import '@/styles/MiniCalendar.css';
 import AppWrappers from './AppWrappers';
 import RootHead from './head';
+import FixedPlugin from '@/components/fixedPlugin/FixedPlugin';
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
@@ -71,6 +72,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                 >
                   {children}
                 </Box>
+                <FixedPlugin/>
                 <Box>
                   <Footer />
                 </Box>
