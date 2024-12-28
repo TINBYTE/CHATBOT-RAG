@@ -1,7 +1,3 @@
-Voici une version consolidée du cahier des charges en intégrant les deux documents que vous avez fournis. 
-
----
-
 ### Cahier des Charges Consolidé : Application Web de Génération et d'Évaluation de Quizz
 
 ---
