@@ -59,19 +59,7 @@ export default function HeroSection() {
           ASK<Box as="span" color="#F9C650">.Base</Box>
         </Text>
       </Flex>
-        <Flex
-          display={{ base: "none", md: "flex" }}
-          align="center"
-          gap={12}
-          color="gray.900"
-        >
-          {['Product', 'Features', 'Pricing', 'Company'].map((item) => (
-            <Link key={item} fontSize="sm" fontWeight="medium" href="/+{}" color={textColor}>
-              {item}
-            </Link>
-          ))}
-        </Flex>
-
+        
         <Flex display={{ base: "none", md: "flex" }} gap={8} align="center">
           {user ? (
             <Link href="/settings">
