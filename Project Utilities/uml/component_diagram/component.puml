@@ -1,0 +1,30 @@
+@startuml "Quiz Application Components"
+
+package "Frontend" {
+    [User Interface] as UI
+    [State Management] as SM
+    [API Client] as AC
+}
+
+package "Backend" {
+    [Authentication Service] as AS
+    [Quiz Controller] as QC
+    [Quiz Service] as QS
+    [Question Generator] as QG
+}
+
+database "Database" as DB
+
+interface "REST API" as API
+interface "DB Interface" as DBI
+
+UI -- SM
+SM -- AC
+AC -- API
+API - QC
+QC -- QS
+QS -- QG
+QS -- DBI
+DBI - DB
+
+@enduml
