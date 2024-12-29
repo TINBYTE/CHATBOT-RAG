@@ -1,0 +1,28 @@
+@startuml "Quiz Application Deployment"
+
+node "User Device" {
+    [Web Browser] as WB
+}
+
+node "Frontend Server" {
+    [Next.js Application] as NA
+}
+
+node "Backend Server" {
+    [API Server] as AS
+}
+
+node "Database Server" {
+    database "MySQL" as DB
+}
+
+cloud "External Services" {
+    [Quiz Generation API] as QA
+}
+
+WB --> NA : HTTPS
+NA --> AS : REST/HTTP
+AS --> DB : TCP/IP
+AS --> QA : HTTPS
+
+@enduml
