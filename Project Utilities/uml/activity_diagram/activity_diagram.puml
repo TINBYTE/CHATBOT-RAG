@@ -1,0 +1,49 @@
+@startuml
+start
+
+:User opens the application;
+if (Is the user authenticated?) then (yes)
+    :Redirect to dashboard;
+else (no)
+    :Display login/register screen;
+    if (Does the user register?) then (yes)
+        :Submit registration form;
+        :Save user data to the database;
+    endif
+    :Submit login form;
+    :Verify user credentials;
+    if (Credentials valid?) then (yes)
+        :Grant access;
+    else (no)
+        :Display error message;
+        stop
+    endif
+endif
+
+:User accesses the dashboard;
+:User selects "Create Quiz";
+:User enters preferences (prompt, difficulty, etc.);
+:Submit quiz creation request;
+
+:Backend generates questions;
+:Save quiz and questions to the database;
+
+:Display generated quiz;
+while (Are there more questions?) is (yes)
+    :User answers question;
+    :Save user response;
+endwhile (no)
+
+:Calculate score and feedback;
+:Save quiz attempt to the database;
+:Display feedback and explanations;
+
+:User views quiz history;
+:Fetch quiz attempts from the database;
+:Display quiz history;
+
+stop
+@enduml
+
+
+
