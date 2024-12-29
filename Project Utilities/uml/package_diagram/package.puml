@@ -1,0 +1,40 @@
+@startuml "Quiz Application Packages"
+
+package "Frontend" {
+    package "Components" {
+        [UI Components]
+        [Forms]
+    }
+    package "State" {
+        [Store]
+        [Actions]
+    }
+}
+
+package "Backend" {
+    package "API" {
+        [Controllers]
+        [Middleware]
+    }
+    package "Business" {
+        [Services]
+        [Models]
+    }
+    package "Data" {
+        [Repositories]
+        [Entities]
+    }
+}
+
+package "Shared" {
+    [Types]
+    [Constants]
+}
+
+Frontend ..> Shared
+Backend ..> Shared
+[Components] ..> [Store]
+[Controllers] ..> [Services]
+[Services] ..> [Repositories]
+
+@enduml
