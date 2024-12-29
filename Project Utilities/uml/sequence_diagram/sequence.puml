@@ -1,0 +1,38 @@
+@startuml "Quiz Creation Sequence"
+
+actor User
+participant "Frontend" as FE
+participant "QuizController" as QC
+participant "QuizService" as QS
+participant "Generator" as GEN
+database "Database" as DB
+
+User -> FE : Create Quiz Request
+activate FE
+
+FE -> QC : createQuiz(params)
+activate QC
+
+QC -> QS : generateQuiz(params)
+activate QS
+
+QS -> GEN : generateQuestions()
+activate GEN
+GEN --> QS : questions
+deactivate GEN
+
+QS -> DB : saveQuiz(quiz)
+activate DB
+DB --> QS : saved
+deactivate DB
+
+QS --> QC : quiz
+deactivate QS
+
+QC --> FE : response
+deactivate QC
+
+FE --> User : Quiz Created
+deactivate FE
+
+@enduml
