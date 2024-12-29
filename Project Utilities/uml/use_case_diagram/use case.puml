@@ -1,0 +1,49 @@
+@startuml "Quiz Application Use Cases"
+
+left to right direction
+skinparam actorStyle awesome
+
+:Unauthenticated User: as unauth
+:Authenticated User: as auth
+:Quiz Generator: as gen
+
+rectangle "Quiz Application" {
+    package "Authentication" {
+        usecase "Register" as UC1
+        usecase "Login" as UC2
+        usecase "Manage Profile" as UC3
+    }
+    
+    package "Quiz Management" {
+        usecase "Create Quiz" as UC4
+        usecase "Edit Quiz" as UC5
+        usecase "Delete Quiz" as UC6
+        usecase "Generate Questions" as UC7
+    }
+    
+    package "Quiz Taking" {
+        usecase "Start Quiz" as UC8
+        usecase "Submit Answers" as UC9
+        usecase "View Results" as UC10
+    }
+    
+    package "History" {
+        usecase "View History" as UC11
+        usecase "Export Results" as UC12
+    }
+}
+
+unauth --> UC1
+unauth --> UC2
+auth --> UC3
+auth --> UC4
+auth --> UC5
+auth --> UC6
+auth --> UC8
+auth --> UC9
+auth --> UC10
+auth --> UC11
+auth --> UC12
+gen --> UC7
+
+@enduml
