@@ -1,0 +1,98 @@
+@startuml
+object User {
+    id: 1
+    username: "john_doe"
+    email: "john@example.com"
+    createdAt: "2024-12-20 10:00:00"
+}
+
+object Quiz {
+    id: 1
+    userId: 1
+    title: "SQL Basics Quiz"
+    prompt: "Create a quiz about SQL basics"
+    createdAt: "2024-12-20 10:05:00"
+}
+
+object Question1 {
+    id: 1
+    quizId: 1
+    questionText: "Which SQL keyword is used to retrieve data from a database?"
+    questionType: "mcq"
+    correctOption: 2
+    explanation: "The SELECT statement is used to retrieve data from a database."
+}
+
+object Question2 {
+    id: 2
+    quizId: 1
+    questionText: "What does the SQL JOIN operation do?"
+    questionType: "mcq"
+    correctOption: 1
+    explanation: "JOIN is used to combine rows from two or more tables."
+}
+
+object Option1Q1 {
+    id: 1
+    questionId: 1
+    optionText: "INSERT"
+    optionIndex: 0
+}
+
+object Option2Q1 {
+    id: 2
+    questionId: 1
+    optionText: "DELETE"
+    optionIndex: 1
+}
+
+object Option3Q1 {
+    id: 3
+    questionId: 1
+    optionText: "SELECT"
+    optionIndex: 2
+}
+
+object Option4Q1 {
+    id: 4
+    questionId: 1
+    optionText: "UPDATE"
+    optionIndex: 3
+}
+
+object QuizAttempt {
+    id: 1
+    quizId: 1
+    userId: 1
+    score: 100.00
+    passed: true
+    attemptDate: "2024-12-20 10:30:00"
+}
+
+object UserAnswer1 {
+    id: 1
+    attemptId: 1
+    questionId: 1
+    userResponse: "SELECT"
+    isCorrect: true
+}
+
+object UserAnswer2 {
+    id: 2
+    attemptId: 1
+    questionId: 2
+    userResponse: "Combines rows from two or more tables"
+    isCorrect: true
+}
+
+User --> Quiz : owns
+Quiz --> Question1 : contains
+Quiz --> Question2 : contains
+Question1 --> Option1Q1 : has
+Question1 --> Option2Q1 : has
+Question1 --> Option3Q1 : has
+Question1 --> Option4Q1 : has
+User --> QuizAttempt : attempts
+QuizAttempt --> UserAnswer1 : records
+QuizAttempt --> UserAnswer2 : records
+@enduml
