@@ -1,0 +1,19 @@
+@startuml "Quiz State Machine"
+
+[*] --> Idle
+
+state Idle
+state "In Progress" as Progress
+state "Paused" as Paused
+state "Completed" as Completed
+state "Expired" as Expired
+
+Idle --> Progress : Start Quiz
+Progress --> Paused : Pause
+Paused --> Progress : Resume
+Progress --> Completed : Submit
+Progress --> Expired : Time Out
+Completed --> [*]
+Expired --> [*]
+
+@enduml
